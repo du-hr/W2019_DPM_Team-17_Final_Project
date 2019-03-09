@@ -23,7 +23,7 @@ To clone this repository, enter `git clone https://github.com/W2019-ECSE223/ecse
 5. To merge pushed changes with master branch, create a pull request and get one person to approve your request.
 
 #### Long Guide
-1. Go to the ["Issues" tab on GitHub](https://github.com/W2019-ECSE223/ecse223-group-project-p-27/issues).
+1. Go to the ["Issues" tab on GitHub](https://github.com/du-hr/W2019_DPM_Team-17_Final_Project/issues).
 2. Look for an issue to fix or create your own issue (press "New issue").
     1. If you are fixing another person's issue:
         1. You can leave a comment if you have questions for the person who created the issue.
@@ -48,7 +48,7 @@ To clone this repository, enter `git clone https://github.com/W2019-ECSE223/ecse
         1. In the `"Commit Message"`, you can automatically close an issue by including the phrase `closes #4` (in this case `#4` is the ID number of the issue, you can find this number in the "Issues" tab on GitHub).
         2. Aside from `closes`, you can use the keywords: `close`, `closed`, `fix`, `fixes`, `fixed`, `resolve`, `resolves`, or `resolved`. It can be capitalized too.
 7. Push your code to online master branch: `git push -u origin <your-branch-name>` (DO NOT push from your local master branch).
-8. Go to the ["Pull requests" tab on GitHub](https://github.com/W2019-ECSE223/ecse223-group-project-p-27/pulls). Press the "Create pull request" button for your branch.
+8. Go to the ["Pull requests" tab on GitHub](https://github.com/du-hr/W2019_DPM_Team-17_Final_Project/pulls). Press the "Create pull request" button for your branch.
 9. Get someone to approve it in "Pull requests" tab.
 10. If you didn't automatically close the issue you were trying to fix in step 6.i.a, you can do that manually right now. Go to the "Issues" tab, click the issue you fixed, then press the "Close issue" button.
 11. Switch to master branch: `git checkout master`

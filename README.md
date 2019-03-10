@@ -3,7 +3,7 @@
 ## How to Use this GitHub Repository
 
 ### How to Clone
-To clone this repository, enter `git clone https://github.com/W2019-ECSE223/ecse223-group-project-p-27` in the desired directory. It will create a `ecse223-group-project-p-27` folder containing our project code.
+To clone this repository, enter `git clone https://github.com/du-hr/W2019_DPM_Team-17_Final_Project` in the desired directory. It will create a `W2019_DPM_Team-17_Final_Project` folder containing our project code.
 
 ### How to Make Changes to Our Project
 

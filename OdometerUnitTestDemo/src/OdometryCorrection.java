@@ -54,17 +54,24 @@ public class OdometryCorrection implements Runnable {
 				numruns = 0;
 				double theta = odometer.getXYT()[2];//Direction depending on the angle
 				double[] XYT = odometer.getXYT();
+				Main.gyro_sp.fetchSample(Main.gyro_sample, 0);
+				double angle = Main.gyro_sample[0];
+				if(angle < 0) {
+					angle *= -1;
+				}
+				else if (angle > 0){
+					angle = 360 - angle;
+				}
 				//This is the first Y turn, so change the Y position accordingly
 				if((theta <25 || theta > 335)||(theta<205 && theta > 155)) { //The angle suggests a y direction
 					int y = (int)Math.round(XYT[1]/TILE_LENGTH);
 					odometer.setY(y*TILE_LENGTH);
-					//TODO set the angle using the gyro sensor
 				}
 				else if((theta > 75 && theta < 115)||(theta > 255 && theta < 290)) {//The angle suggests an x direction
 					int x = (int)Math.round(XYT[0]/TILE_LENGTH);
 					odometer.setY(x*TILE_LENGTH);
-					//TODO set the angle using the gyro sensor
 				}
+				odometer.setTheta(angle);
 			}
 			// this ensures the odometry correction occurs only once every period
 			correctionEnd = System.currentTimeMillis();

@@ -2,6 +2,10 @@ import lejos.hardware.Button;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.port.Port;
+import lejos.hardware.sensor.EV3GyroSensor;
+import lejos.robotics.Gyroscope;
+import lejos.robotics.SampleProvider;
 
 public class Main{
 
@@ -11,8 +15,12 @@ public class Main{
   private static final EV3LargeRegulatedMotor rightMotor =
       new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
   private static final TextLCD lcd = LocalEV3.get().getTextLCD();
-  public static final double WHEEL_RAD = 2.25;
-  public static final double TRACK = 14.12;
+  public static final double WHEEL_RAD = 2.05;
+  public static final double TRACK = 11.2;
+  public static EV3GyroSensor   gyrosensor;
+  public static SampleProvider  gyro_sp;
+   public static float [] gyro_sample;
+   private static final Port gyroPort = LocalEV3.get().getPort("S3");
 
   public static void main(String[] args) throws OdometerExceptions {
 
@@ -21,33 +29,26 @@ public class Main{
     // Odometer related objects
     Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, TRACK, WHEEL_RAD);
     OdometryCorrection odometryCorrection = new OdometryCorrection();
+    gyrosensor = new EV3GyroSensor(gyroPort);
+    gyro_sp = gyrosensor.getAngleAndRateMode();
+    gyro_sample = new float[gyro_sp.sampleSize()];
+    gyrosensor.reset();
     do {
       // clear the display
       lcd.clear();
 
       // ask the user whether the motors should drive in a square or float
-      lcd.drawString("       s        ", 0, 0);
+      lcd.drawString("      start     ", 0, 0);
 
       buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
     } while (buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT);
       // clear the display
       lcd.clear();
-
-      // ask the user whether odometery correction should be run or not
-      lcd.drawString("< Left | Right >", 0, 0);
-      lcd.drawString("  No   | with   ", 0, 1);
-      lcd.drawString(" corr- | corr-  ", 0, 2);
-      lcd.drawString(" ection| ection ", 0, 3);
-      lcd.drawString("       |        ", 0, 4);
-
-      buttonChoice = Button.waitForAnyPress(); // Record choice (left or right press)
-
-      // Start odometer and display threads
+      // Start odometer
       Thread odoThread = new Thread(odometer);
       odoThread.start();
       Thread odoCorrectionThread = new Thread(odometryCorrection);
       odoCorrectionThread.start();
-
       // spawn a new Thread to avoid SquareDriver.drive() from blocking
       (new Thread() {
         public void run() {

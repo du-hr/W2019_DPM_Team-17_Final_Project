@@ -19,8 +19,8 @@ public class Main{
   public static final double TRACK = 11.2;
   public static EV3GyroSensor   gyrosensor;
   public static SampleProvider  gyro_sp;
-   public static float [] gyro_sample;
-   private static final Port gyroPort = LocalEV3.get().getPort("S3");
+  public static float [] gyro_sample;
+  private static final Port gyroPort = LocalEV3.get().getPort("S3");
 
   public static void main(String[] args) throws OdometerExceptions {
 

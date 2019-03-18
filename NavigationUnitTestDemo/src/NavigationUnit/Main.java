@@ -3,9 +3,9 @@ package NavigationUnit;
 public class Main {
   public static final int FORWARD_SPEED = 0;
   public static final int ROTATE_SPEED = 0;
-  public static final int WHEEL_RADIUS = 0;
-  public static final int WHEEL_BASE = 0;
-  public static final int TILE_SIZE = 0;
+  public static final double WHEEL_RADIUS = 0;
+  public static final double WHEEL_BASE = 0;
+  public static final double TILE_SIZE = 30.48;
   public static int RedTeam = 1;
   public static int RedCorner = 0;
   public static int GreenTeam = 1; // Red=4, Yellow=3, Green=2, Blue=1

@@ -1,25 +1,33 @@
 package NavigationUnit;
 
-import lejos.hardware.motor.EV3LargeRegulatedMotor;
-import lejos.hardware.motor.EV3MediumRegulatedMotor;
+import static NavigationUnit.Main.*;
+import static NavigationUnit.Navigation.*;
+public class MapDriver extends Thread {
 
-public class MapDriver {
-  private EV3MediumRegulatedMotor clawMotor;
-  private EV3LargeRegulatedMotor leftMotor, rightMotor, colorSensorMotor;
-  ClawMovement claw = ClawMovement.getClawMovement(clawMotor);
-  //CanWeightDetection weightDetector = CanWeightDetection.getCanWeightDetection(leftMotor, rightMotor, colorSensorMotor, clawMotor);
-  
   public MapDriver() {
     
   }
-  public void holdCan() {
-    // TODO to be fit to cross the bridge
-    claw.holdCan();
+  
+  @Override
+  public void run() {
+      travelTo(0,2);
+      travelTo(1,1);
+      travelTo(2,2);
+      travelTo(2,1);
+      travelTo(1,0);
+      
   }
   
-  // put it in Main
-  //public void detectWeight() {
-   // weightDetector.doWeightDetection();
- // }
+  public void moveToTunnel() {
+  }
+  
+  public void moveToIsland() {
+    ClawMovement.holdCan(); // to be fit to cross the bridge
+    
+  }
+  public void moveToSearchZone() {
+    
+  }
+  public void search
 
 }

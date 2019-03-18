@@ -20,7 +20,7 @@ public class ClawMovement {
 
 
   
- public void holdCan() {
+ public static void holdCan() {
    
  }
 }

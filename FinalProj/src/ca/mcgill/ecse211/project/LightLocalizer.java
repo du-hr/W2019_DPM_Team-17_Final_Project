@@ -47,7 +47,7 @@ class LightLocalizer {
 		this.odometer = odometer;
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
-		navigation = new Navigation(odometer, leftMotor, rightMotor, Project.WHEEL_RAD); //We create a navigation class
+		navigation = new Navigation(odometer, leftMotor, rightMotor); //We create a navigation class
 		this.lightSensor = new EV3ColorSensor(lightPort);
 		this.color = lightSensor.getMode("Red");
 		this.colorData = new float[lightSensor.sampleSize()];
@@ -57,7 +57,7 @@ class LightLocalizer {
 	 * This method is used to bring the cart to the origin 
 	 * @return Not used
 	 */
-	public void getOrigin() {
+	public void findOrigin() {
 		navigation.turnTo(Math.PI / 4);
 		leftMotor.setSpeed(ROTATION_SPEED);
 		rightMotor.setSpeed(ROTATION_SPEED);
@@ -76,8 +76,8 @@ class LightLocalizer {
 		//Once a line is detected, we move backward a specific distance
 		leftMotor.stop(true);
 		rightMotor.stop();
-		leftMotor.rotate(convertDistance(Project.WHEEL_RAD, -9), true);
-		rightMotor.rotate(convertDistance(Project.WHEEL_RAD, -9), false);
+		leftMotor.rotate(convertDistance(Project.WHEEL_RADIUS, -9), true);
+		rightMotor.rotate(convertDistance(Project.WHEEL_RADIUS, -9), false);
 
 	}
 
@@ -89,7 +89,7 @@ class LightLocalizer {
 		leftMotor.setSpeed(ROTATION_SPEED);
 		rightMotor.setSpeed(ROTATION_SPEED);
 		//Start by getting close to the origin
-		getOrigin();
+		findOrigin();
 		while (numLines < 4) {//Rotate and detect the 4 lines the sensor comes across
 			leftMotor.forward();
 			rightMotor.backward();
@@ -116,8 +116,8 @@ class LightLocalizer {
 		rightMotor.setSpeed(ROTATION_SPEED / 2);
 		//Rotate to be in the 0° direction
 		if (odometer.getXYT()[2] <= 350 && odometer.getXYT()[2] >= 10.0) {
-			leftMotor.rotate(convertAngle(Project.WHEEL_RAD, Project.TRACK, -odometer.getXYT()[2]), true);
-			rightMotor.rotate(-convertAngle(Project.WHEEL_RAD, Project.TRACK, -odometer.getXYT()[2]), false);
+			leftMotor.rotate(convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, -odometer.getXYT()[2]), true);
+			rightMotor.rotate(-convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, -odometer.getXYT()[2]), false);
 		}
 		navigation.turnTo(Math.PI/2);
 		leftMotor.stop(true);

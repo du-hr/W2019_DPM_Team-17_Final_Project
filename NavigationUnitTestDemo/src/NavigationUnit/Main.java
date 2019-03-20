@@ -1,5 +1,7 @@
 package NavigationUnit;
 
+import Odometer.*;
+import lejos.hardware.Button;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
@@ -41,10 +43,29 @@ public class Main {
 	public static EV3ColorSensor lightSensor = new EV3ColorSensor(lightPort);
 
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws OdometerExceptions {
 		// TODO Auto-generated method stub
 		// Uncomment following line if wifi class needed (don't forget to change server IP)
 		// Wifi wifi = new Wifi();
+		int buttonChoice;
+		do {
+			// clear the display
+			lcd.clear();
+			// ask the user to start the demo by selecting either left or right
+			lcd.drawString("     Start      ", 0, 0);
+			lcd.drawString("                ", 0, 1);
+			lcd.drawString("                ", 0, 2);
+			lcd.drawString("                ", 0, 3);
+			lcd.drawString("                ", 0, 4);
+			buttonChoice = Button.waitForAnyPress();
+		} while (buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT);
+		lcd.clear();
+		gyrosensor.reset();
+		Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, WHEEL_BASE, WHEEL_RADIUS);
+		Thread odoThread = new Thread(odometer);
+		odoThread.start();
+		MapDriver map_driver = new MapDriver();
+		map_driver.drive();
 
 	}
 

@@ -10,174 +10,180 @@
  */
 package ca.mcgill.ecse211.project;
 
-import ca.mcgill.ecse211.odometer.*;
-import lejos.hardware.Sound;
+import ca.mcgill.ecse211.odometer.Odometer;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import static ca.mcgill.ecse211.project.Project.*;
 
-public class Navigation extends Thread {
-	//Variables related to the motors and to the odometer
-	private Odometer odometer;
-	private EV3LargeRegulatedMotor leftMotor;
-	private EV3LargeRegulatedMotor rightMotor;
-	//Variables related to the position
-	private double dX;
-	private double dY;
-	private double Xpos;
-	private double Ypos;
-	private double theta;
-	private int LLx;
-	private int LLy;
-	private int URx;
-	private int URy;
-	private double x;
-	private double y;
-	//Variables related to the speed, tile size, and wheel radius 
-	private static final int FORWARD_SPEED = 150;
-	private static final int ROTATE_SPEED = 140;
-	private static final double TILE_SIZE = 30.48;
-	private double WHEEL_RAD;
-	private boolean navigate = true;
+public class Navigation {
+	private static Odometer odometer;
+	private static EV3LargeRegulatedMotor leftMotor;
+	private static EV3LargeRegulatedMotor rightMotor;
+	private static boolean navigating = false;
 
-	/**
-	 * This is the constructor for the class 
-	 * @param odometer   The odometer
-	 * @param leftMotor  The left motor of the robot
-	 * @param rightMotor The right motor of the robot
-	 * @param WR         The wheel radius of the robot
-	 * @return Not used
-	 */
-	public Navigation(Odometer odometer, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,
-			double WR) {
-		this.WHEEL_RAD = WR;
-		this.odometer = odometer;
+
+
+	public Navigation(Odometer odometer, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor){
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
-	}	
-
-	/**
-	 * This is the run method for navigation
-	 * @return Not used
-	 */
-	public void run() {
-		//Traveling through the map the robot has to cover
-		travelTo(TILE_SIZE, TILE_SIZE);
-		travelTo(0.0, 2*TILE_SIZE);
-		travelTo(2*TILE_SIZE, 2 * TILE_SIZE);
-		travelTo(2*TILE_SIZE, TILE_SIZE);
-		travelTo(TILE_SIZE,0.0);
+		this.odometer = odometer;
 	}
 
-	/**
-	 * This is the method that drives the motors forward by a specified distance
-	 * @param travelDist  The distance to travel
-	 * @return Not used
-	 */
-	public void drive (double travelDist) {
-		//Set the speed
-		leftMotor.setSpeed(FORWARD_SPEED);
-		rightMotor.setSpeed(FORWARD_SPEED);
-		//Rotate the motors until achieving the required distance
-		leftMotor.rotate(convertDistance(WHEEL_RAD, travelDist), true);
-		rightMotor.rotate(convertDistance(WHEEL_RAD, travelDist), false);
+	public static Navigation getNavigation(Odometer odometer, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor) {
 
+		Navigation navigator = new Navigation(odometer, leftMotor, rightMotor);
+		return navigator;
 	}
 
-	/**
-	 * This is the method that travels the EV3 from the current position to a specified location
-	 * @param x  The x coordinate to achieve
-	 * @param y  The y coordinate to achieve
-	 * @return Not used
-	 */
-	public void travelTo(double x, double y) {
-		//Get the current position
-		Xpos = odometer.getXYT()[0];
-		Ypos = odometer.getXYT()[1];
-		//Get the displacement needed in x and y
-		dX = x - Xpos;
-		dY = y - Ypos;
-		//Calculate the current angle
-		theta = (odometer.getXYT()[2]) ;
-		//Calculate the angle to rotate
-		double angle = Math.atan2(dX,dY) - theta*Math.PI/180;
-		if(angle < - Math.PI)
-			angle += 2*Math.PI;
-		else if (angle > Math.PI)
-			angle -= 2*Math.PI;
-		//Calculate the euclidean distance to travel
-		double dist = Math.sqrt(dX*dX + dY*dY);
-		//Turn to the right direction and drive to the final position
-		turnTo(angle);
-		drive(dist);
+	public static void travelTo(double x, double y) {
 
-	}
-	/**
-	 * This is the method used to turn by a minimal angle
-	 * @param angle  The angle to turn by
-	 * @return Not used
-	 */
-	public void turnTo(double angle) {
+		//x = x * TILE_SIZE;
+		//y = y * TILE_SIZE;
+
+
+		//reset motors
+		leftMotor.stop();
+		rightMotor.stop();
+
+		leftMotor.setAcceleration(3000);
+		rightMotor.setAcceleration(3000);
+
+
+		navigating = true;
+
+		//calculate trajectory path and angle
+		double[] odoData = odometer.getXYT();
+		double X = odoData[0];
+		double Y = odoData[1];
+		double trajectoryX = x - X;
+		double trajectoryY = y - Y;
+		double trajectoryAngle = Math.toDegrees(Math.atan2(trajectoryX, trajectoryY));
+
+		//rotate to correct angle
 		leftMotor.setSpeed(ROTATE_SPEED);
 		rightMotor.setSpeed(ROTATE_SPEED);
-		/*angle = angle*180/Math.PI;
-		Project.gyro_sp.fetchSample(Project.gyro_sample, 0);
-		double init = Project.gyro_sample[0];
-		if(init < 0) {
-			init += 360;
-		}
-		double turn = Project.gyro_sample[0] - init - angle;
-		while(Math.abs(turn) > 0.1) {
-			double an = Project.gyro_sample[0];
-			if(Project.gyro_sample[0] < angle) {
-				leftMotor.forward();
-				rightMotor.backward();
-			}
-			else {
-				leftMotor.backward();
-				rightMotor.forward();
-			}
-		}*/
-		//If the angle is positive, turn to the right
-		if (angle > 0) {
-			leftMotor.rotate(convertAngle(Project.WHEEL_RAD, Project.TRACK, (angle * 180) / Math.PI), true);
-			rightMotor.rotate(-convertAngle(Project.WHEEL_RAD, Project.TRACK, (angle * 180) / Math.PI), false);
+		turnTo(trajectoryAngle);
+		double trajectoryLine = Math.hypot(trajectoryX, trajectoryY);
+		//move forward correct distance
+		leftMotor.setSpeed(FORWARD_SPEED);
+		rightMotor.setSpeed(FORWARD_SPEED);
+		leftMotor.rotate(convertDistanceForMotor(trajectoryLine),true);
+		rightMotor.rotate(convertDistanceForMotor(trajectoryLine),false);
+	}
+	private static double gyroFetch() {
+		gyro_sp.fetchSample(gyro_sample, 0);
+		angleCorrection();
+		return odometer.getXYT()[2];
+	}
 
-		} else {//If the angle is negative, turn to the left
-			leftMotor.rotate(-convertAngle(Project.WHEEL_RAD, Project.TRACK,-((angle * 180) / Math.PI)), true);
-			rightMotor.rotate(convertAngle(Project.WHEEL_RAD, Project.TRACK, -((angle * 180) / Math.PI)), false);
+	private static void angleCorrection() {
+		gyro_sp.fetchSample(gyro_sample, 0);
+		if (gyro_sample[0] >= 0) {
+			odometer.setXYT(odometer.getXYT()[0], odometer.getXYT()[1],gyro_sample[0]);
+		}else {
+			odometer.setXYT(odometer.getXYT()[0], odometer.getXYT()[1], 360+gyro_sample[0]);
 		}
 	}
+	//to make sure the angle of each turn is the minimum angle possible
+	public static void turnTo(double heading) {
+		double[] odoData = odometer.getXYT();
+		double theta = odoData[2];
+		//theta = gyroFetch();
+		//Replace previous line of code with previous comment to test correction
+		//Also change turnRight and turnLeft with turnRight2 and turnLeft2
+		double angle = heading-theta;
 
-	/**
-	 * This method is used to check if the robot is navigating
-	 * @return navigate
+
+		if(angle < -180.0) {
+			angle = angle + 360;
+			turnRight(angle);
+		} 
+		else if (angle > 180.0) {
+			angle = angle - 360;
+			turnLeft(angle);
+
+		} 
+		else if (angle < 0) {
+			turnLeft(angle);
+		}
+		else if(angle > 0) {
+			turnRight(angle);
+		}
+	}
+
+
+	private static void turnLeft (double angle) {
+		leftMotor.rotate(-convertAngleForMotor(Math.abs(angle)),true);
+		rightMotor.rotate(convertAngleForMotor(Math.abs(angle)),false);
+	}
+
+	private static void turnRight (double angle) {
+		leftMotor.rotate(convertAngleForMotor(Math.abs(angle)),true);
+		rightMotor.rotate(-convertAngleForMotor(Math.abs(angle)),false);
+	}
+
+	private static void turnLeft2(double degree) {
+		if (degree <= 1) {
+			return;
+		}
+		int speed;
+		double minAngle = 0;
+		double angle = gyroFetch();
+		double angle1 = gyroFetch();
+		while((Math.abs(angle - angle1 - degree)>=1) && (Math.abs((angle1 - angle) - (360-degree))>=1)){
+			minAngle = Math.min((Math.abs(angle - angle1 - degree)), Math.abs((angle1 - angle) - (360-degree)));
+			speed = (int)(80 - 25/(minAngle+1));
+			leftMotor.setSpeed(speed);
+			rightMotor.setSpeed(speed);
+			leftMotor.backward();
+			rightMotor.forward();
+			angle1 = gyroFetch();
+		}
+		leftMotor.stop(true);
+		rightMotor.stop();
+	}
+
+	private static void turnRight2(double degree) {
+		if(degree <= 1) {
+			return;
+		}
+		double minAngle = 0;
+		int speed;
+		double angle = gyroFetch();
+		double angle1 = gyroFetch();
+		while((Math.abs(angle1 - angle - degree)>=1) && (Math.abs((angle - angle1) - (360-degree))>=1)){
+			minAngle = Math.min((Math.abs(angle1 - angle - degree)), Math.abs((angle - angle1) - (360-degree)));
+			speed = (int)(80 - 25/(minAngle+1));
+			leftMotor.setSpeed(speed);
+			rightMotor.setSpeed(speed);
+			leftMotor.forward();
+			rightMotor.backward();
+			angle1 = gyroFetch();
+		}
+		leftMotor.stop(true);
+		rightMotor.stop();
+	}
+
+	/* returns: whether or not the vehicle is currently navigating
 	 */
-	boolean isNavigating() throws OdometerExceptions {
-		return navigate;
+	public boolean isNavigating() {
+		return navigating;
 	}
 
 	/**
-	 * This method is used to set the value of the boolean navigate
-	 * @param isnav  boolean to set navigate value to
-	 * @return Not used
-	 */
-	void setisnav(boolean isnav){
-		navigate=isnav;
-	}
-
-	/**
-	 * This method allows the conversion of a distance to the total rotation of each
-	 * wheel need to cover that distance.
+	 * This method allows the conversion of a distance to the total rotation of each wheel need to
+	 * cover that distance.
 	 * 
 	 * @param radius
 	 * @param distance
 	 * @return
 	 */
-	private static int convertDistance(double radius, double distance) {
-		return (int) ((180.0 * distance) / (Math.PI * radius));
+	private static int convertDistanceForMotor(double distance){
+		return (int) (360*distance/(2*Math.PI*WHEEL_RADIUS));
 	}
 
-	private static int convertAngle(double radius, double width, double angle) {
-		return convertDistance(radius, Math.PI * width * angle / 360.0);
+	private static int convertAngleForMotor(double angle){
+		return convertDistanceForMotor(Math.PI*WHEEL_BASE*angle/360.0);
 	}
+
+
 }
-

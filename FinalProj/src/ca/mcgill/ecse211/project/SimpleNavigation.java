@@ -227,8 +227,8 @@ public class SimpleNavigation extends Thread {
 		leftMotor.setSpeed(FORWARD_SPEED);
 		rightMotor.setSpeed(FORWARD_SPEED);
 		//Rotate the motors until achieving the required distance
-		leftMotor.rotate(convertDistance(Project.WHEEL_RAD, travelDist), true);
-		rightMotor.rotate(convertDistance(Project.WHEEL_RAD, travelDist), false);
+		leftMotor.rotate(convertDistance(Project.WHEEL_RADIUS, travelDist), true);
+		rightMotor.rotate(convertDistance(Project.WHEEL_RADIUS, travelDist), false);
 
 	}
 

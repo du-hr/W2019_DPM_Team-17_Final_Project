@@ -98,8 +98,8 @@ class USLocalizer {
 		//Calculate the angle by which to turn to face the 0° angle
 		turningAngle = deltaTheta + odometer.getXYT()[2];
 		//Turn towards the 0° angle
-		leftMotor.rotate(-convertAngle(Project.WHEEL_RAD, Project.TRACK, turningAngle+4.5), true);
-		rightMotor.rotate(convertAngle(Project.WHEEL_RAD, Project.TRACK, turningAngle+4.5), false);
+		leftMotor.rotate(-convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, turningAngle+4.5), true);
+		rightMotor.rotate(convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, turningAngle+4.5), false);
 		//Reset the values of the odometer
 		odometer.setXYT(0.0, 0.0, 0.0);
 	}
@@ -157,8 +157,8 @@ class USLocalizer {
 		//Calculate the angle by which to turn to face the 0° angle
 		turningAngle = deltaTheta + odometer.getXYT()[2];
 		//Turn towards the 0° angle
-		leftMotor.rotate(-convertAngle(Project.WHEEL_RAD, Project.TRACK, turningAngle - 1), true);
-		rightMotor.rotate(convertAngle(Project.WHEEL_RAD, Project.TRACK, turningAngle - 1), false);
+		leftMotor.rotate(-convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, turningAngle - 1), true);
+		rightMotor.rotate(convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, turningAngle - 1), false);
 		//Reset the values of the odometer
 		odometer.setXYT(0.0, 0.0, 0.0);
 	}

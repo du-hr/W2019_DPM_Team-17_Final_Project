@@ -12,7 +12,6 @@ public class OdometryCorrection implements Runnable {
 	// Variables related to the light sensor and the tile length
 	private static final long CORRECTION_PERIOD = 10;
 	private static final double TILE_LENGTH = 30.48;
-	private static Port lightPort = LocalEV3.get().getPort("S3");
 	private Odometer odometer;
 	private SensorModes lightSensor;
 	private SampleProvider color;

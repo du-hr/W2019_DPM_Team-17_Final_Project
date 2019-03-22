@@ -41,8 +41,8 @@ public class Project {
 	public static final double WHEEL_RADIUS = 2.05;
 	public static final double WHEEL_BASE = 9.5;
 	public static final double TILE_SIZE = 30.48;
-	public static final int ROTATE_SPEED = 100;
-	public static final int FORWARD_SPEED = 50;
+	public static final int ROTATE_SPEED = 50;
+	public static final int FORWARD_SPEED = 100;
 	// Parameters related to the map and color detection
 	public static int LLx = 2;
 	public static int LLy = 2;
@@ -95,55 +95,18 @@ public class Project {
 			buttonChoice = Button.waitForAnyPress();
 		} while (buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT);//Do the demo once the user chooses to
 		lcd.clear();
-		//TODO Wifi wifi = new Wifi();
+		//Uncomment to use wifi Wifi wifi = new Wifi();
 		Thread odoThread = new Thread(odometer);
 		odoThread.start();
-	    /*USLocalizer USLocalizer = new USLocalizer(odometer, leftMotor, rightMotor, usSensor);
-	    Navigation simpleNavigation = new Navigation (odometer, leftMotor, rightMotor, WHEEL_RAD);
-		LightLocalizer2 lightLocatizer = new LightLocalizer2(odometer, lightSensor,leftMotor, rightMotor, simpleNavigation);
+	    USLocalizer USLocalizer = new USLocalizer(odometer, leftMotor, rightMotor, usSensor);
+		LightLocalizer lightLocalizer = new LightLocalizer(odometer, leftMotor, rightMotor);
 		USLocalizer.fallingEdge();
-		lightLocatizer.doLocalization();*/
+		lightLocalizer.localize();
 		gyrosensor.reset();
+		odometer.setXYT(TILE_SIZE,TILE_SIZE,0.0);
 		MapDriver map_drive = new MapDriver(odometer, leftMotor, rightMotor);
 		map_drive.drive();
-		/*Thread odoCorrectionThread = new Thread(odometryCorrection);
-	    odoCorrectionThread.start();*/
-	    /*simpleNavigation.travelTo(3*TILE_SIZE, 3*TILE_SIZE);
-	    gyro_sp.fetchSample(gyro_sample, 0);
-	    angle = gyro_sample[0];
-		if(angle < 0) {
-			angle += 360;
-		}
-		angle = 360 - angle;
-	    System.out.println("actual angle: "+angle);
-	    System.out.println("odometry angle:"+odometer.getXYT()[0]);
-	    simpleNavigation.travelTo(3*TILE_SIZE, 0);
-	    gyro_sp.fetchSample(gyro_sample, 0);
-	    angle = gyro_sample[0];
-		if(angle < 0) {
-			angle += 360;
-		}
-		angle = 360 - angle;
-	    System.out.println("actual angle: "+angle);
-	    System.out.println("odometry angle:"+odometer.getXYT()[0]);
-	    simpleNavigation.travelTo(0, 0);
-	    gyro_sp.fetchSample(gyro_sample, 0);
-	    angle = gyro_sample[0];
-		if(angle < 0) {
-			angle += 360;
-		}
-		angle = 360 - angle;
-	    System.out.println("actual angle: "+angle);
-	    System.out.println("odometry angle:"+odometer.getXYT()[0]);*/
-		//Do the localization automatically (without user interaction)
-		/*USLocalizer USLocalizer = new USLocalizer(odometer, leftMotor, rightMotor, usSensor);
-		LightLocalizer lightLocatizer = new LightLocalizer(odometer, leftMotor, rightMotor);
-		SimpleNavigation simpleNavigation = new SimpleNavigation (leftMotor, rightMotor);
-		USLocalizer.fallingEdge();
-		lightLocatizer.localize();*/
-		//Navigate through the map
-		//simpleNavigation.doNavigation(LLx, LLy, URx, URy);
-		//Sound.beep();//Beep once the demo is complete		
+		
 		//Stop the program if the user presses another button
 		while (Button.waitForAnyPress() != Button.ID_ESCAPE);
 		System.exit(0);

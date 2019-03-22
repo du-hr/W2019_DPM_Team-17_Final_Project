@@ -27,7 +27,6 @@ class LightLocalizer {
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
 	public Navigation navigation;
 	//Parameters related to the light sensor (input)
-	private static Port lightPort = LocalEV3.get().getPort("S4");
 	private SensorModes lightSensor;
 	private SampleProvider color;
 	private float[] colorData;
@@ -48,7 +47,7 @@ class LightLocalizer {
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
 		navigation = new Navigation(odometer, leftMotor, rightMotor); //We create a navigation class
-		this.lightSensor = new EV3ColorSensor(lightPort);
+		this.lightSensor = Project.lightSensor;
 		this.color = lightSensor.getMode("Red");
 		this.colorData = new float[lightSensor.sampleSize()];
 	}
@@ -90,7 +89,7 @@ class LightLocalizer {
 		rightMotor.setSpeed(ROTATION_SPEED);
 		//Start by getting close to the origin
 		findOrigin();
-		while (numLines < 4) {//Rotate and detect the 4 lines the sensor comes across
+		while (numLines < 1) {//Rotate and detect the 4 lines the sensor comes across
 			leftMotor.forward();
 			rightMotor.backward();
 			color.fetchSample(colorData, 0);
@@ -104,7 +103,10 @@ class LightLocalizer {
 		}
 		leftMotor.stop(true);
 		rightMotor.stop();
-		double dX, dY, thetax, thetay;//Variables used to calculate the 0° direction and the origin
+		
+		leftMotor.rotate(-convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, 15), true);
+		rightMotor.rotate(convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, 15), false);
+		/*double dX, dY, thetax, thetay;//Variables used to calculate the 0° direction and the origin
 		//From the 4 angles stored, calculate how off from the origin and 0° the robot is
 		thetay = lineAngle[3] - lineAngle[1];
 		thetax = lineAngle[2] - lineAngle[0];
@@ -119,7 +121,7 @@ class LightLocalizer {
 			leftMotor.rotate(convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, -odometer.getXYT()[2]), true);
 			rightMotor.rotate(-convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, -odometer.getXYT()[2]), false);
 		}
-		navigation.turnTo(Math.PI/2);
+		navigation.turnTo(Math.PI/2);*/
 		leftMotor.stop(true);
 		rightMotor.stop();
 	}

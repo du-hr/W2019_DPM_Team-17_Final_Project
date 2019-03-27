@@ -57,7 +57,7 @@ class LightLocalizer {
 	 * @return Not used
 	 */
 	public void findOrigin() {
-		navigation.turnTo(Math.PI / 4);
+		navigation.turnTo(45);
 		leftMotor.setSpeed(ROTATION_SPEED);
 		rightMotor.setSpeed(ROTATION_SPEED);
 		color.fetchSample(colorData, 0);

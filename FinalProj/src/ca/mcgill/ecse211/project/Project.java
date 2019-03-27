@@ -44,19 +44,19 @@ public class Project {
 	public static final int ROTATE_SPEED = 50;
 	public static final int FORWARD_SPEED = 100;
 	// Parameters related to the map and color detection
-	public static int LLx = 2;
-	public static int LLy = 2;
-	public static int URx = 5;
-	public static int URy = 5;
-	public static int TN_LLx = 2;
-	public static int TN_LLy = 2;
-	public static int TN_URx = 2;
-	public static int TN_URy = 2;
-	public static int SZ_LLx = 2;
-	public static int SZ_LLy = 2;
-	public static int SZ_URx = 5;
-	public static int SZ_URy = 5;
-	public static int corner = 5;
+	public static int LLx = 0;
+	public static int LLy = 5;
+	public static int URx = 4;
+	public static int URy = 9;
+	public static int TN_LLx = 4;
+	public static int TN_LLy = 7;
+	public static int TN_URx = 6;
+	public static int TN_URy = 6;
+	public static int SZ_LLx = 7;
+	public static int SZ_LLy = 6;
+	public static int SZ_URx = 10;
+	public static int SZ_URy = 9;
+	public static int corner = 3;
 	public static ColorDetect colorDetection = new ColorDetect();
 	public static int TR = 3;
 	public static EV3GyroSensor   gyrosensor;
@@ -103,9 +103,9 @@ public class Project {
 		USLocalizer.fallingEdge();
 		lightLocalizer.localize();
 		gyrosensor.reset();
-		odometer.setXYT(TILE_SIZE,TILE_SIZE,0.0);
+		/*odometer.setXYT(TILE_SIZE,TILE_SIZE,0.0);
 		MapDriver map_drive = new MapDriver(odometer, leftMotor, rightMotor);
-		map_drive.drive();
+		map_drive.drive();*/
 		
 		//Stop the program if the user presses another button
 		while (Button.waitForAnyPress() != Button.ID_ESCAPE);

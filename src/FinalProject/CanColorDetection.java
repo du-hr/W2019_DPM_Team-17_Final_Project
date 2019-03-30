@@ -1,4 +1,4 @@
-package NavigationUnit;
+package FinalProject;
 
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
@@ -16,7 +16,7 @@ public class CanColorDetection {
     this.colorData = colorData;
   }
   
-  public static CanColorDetection getCanColorDetection(SampleProvider colorSensor, float[] colorData,
+  public static CanColorDetection getCanColorDetector(SampleProvider colorSensor, float[] colorData,
       EV3LargeRegulatedMotor colorSensorMotor) {
 
     CanColorDetection canColorDetector = new CanColorDetection(colorSensor, colorData, colorSensorMotor);

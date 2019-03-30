@@ -1,4 +1,4 @@
-package NavigationUnit;
+package FinalProject;
 
 public class Display {
 

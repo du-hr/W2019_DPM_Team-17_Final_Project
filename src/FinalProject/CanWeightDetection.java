@@ -1,4 +1,4 @@
-package NavigationUnit;
+package FinalProject;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
@@ -15,7 +15,7 @@ public class CanWeightDetection {
     this.rightMotor = rightMotor;
   }
   
-  public static CanWeightDetection getCanWeightDetection(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, EV3LargeRegulatedMotor colorSensorMotor,
+  public static CanWeightDetection getCanWeightDetector(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, EV3LargeRegulatedMotor colorSensorMotor,
       EV3MediumRegulatedMotor clawMotor) {
 
     CanWeightDetection canWeightDetector = new CanWeightDetection(leftMotor, rightMotor, colorSensorMotor, clawMotor);

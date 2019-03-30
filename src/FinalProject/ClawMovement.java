@@ -1,4 +1,4 @@
-package NavigationUnit;
+package FinalProject;
 
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 
@@ -14,13 +14,13 @@ public class ClawMovement {
   
   public static ClawMovement getClawMovement(EV3MediumRegulatedMotor clawMotor) {
 
-      ClawMovement claw = new ClawMovement(clawMotor);
-      return claw;
+      ClawMovement clawMover = new ClawMovement(clawMotor);
+      return clawMover;
   }
 
 
   
- public void holdCan() {
+ public static void holdCan() {
    
  }
 }

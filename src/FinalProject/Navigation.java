@@ -81,16 +81,62 @@ public class Navigation {
       turnRight(angle);
     }
   }
+  private static double gyroFetch() {
+    gyro_sp.fetchSample(gyro_sample, 0);
+    angleCorrection();
+    return odometer.getXYT()[2];
+}
 
-  private static void turnLeft(double angle) {
-    leftMotor.rotate(-convertAngleForMotor(Math.abs(angle)), true);
-    rightMotor.rotate(convertAngleForMotor(Math.abs(angle)), false);
-  }
+private static void angleCorrection() {
+    gyro_sp.fetchSample(gyro_sample, 0);
+    if (gyro_sample[0] >= 0) {
+        odometer.setXYT(odometer.getXYT()[0], odometer.getXYT()[1],gyro_sample[0]);
+    }else {
+        odometer.setXYT(odometer.getXYT()[0], odometer.getXYT()[1], 360+gyro_sample[0]);
+    }
+}
 
-  private static void turnRight(double angle) {
-    leftMotor.rotate(convertAngleForMotor(Math.abs(angle)), true);
-    rightMotor.rotate(-convertAngleForMotor(Math.abs(angle)), false);
+public static void turnLeft(double degree) {
+  if (degree <= 1) {
+      return;
   }
+  int speed;
+  double minAngle = 0;
+  double angle = gyroFetch();
+  double angle1 = gyroFetch();
+  while((Math.abs(angle - angle1 - degree)>=1) && (Math.abs((angle1 - angle) - (360-degree))>=1)){
+      minAngle = Math.min((Math.abs(angle - angle1 - degree)), Math.abs((angle1 - angle) - (360-degree)));
+      speed = (int)(80 - 25/(minAngle+1));
+      leftMotor.setSpeed(speed);
+      rightMotor.setSpeed(speed);
+      leftMotor.backward();
+      rightMotor.forward();
+      angle1 = gyroFetch();
+  }
+  leftMotor.stop(true);
+  rightMotor.stop();
+}
+
+public static void turnRight(double degree) {
+  if(degree <= 1) {
+      return;
+  }
+  double minAngle = 0;
+  int speed;
+  double angle = gyroFetch();
+  double angle1 = gyroFetch();
+  while((Math.abs(angle1 - angle - degree)>=1) && (Math.abs((angle - angle1) - (360-degree))>=1)){
+      minAngle = Math.min((Math.abs(angle1 - angle - degree)), Math.abs((angle - angle1) - (360-degree)));
+      speed = (int)(80 - 25/(minAngle+1));
+      leftMotor.setSpeed(speed);
+      rightMotor.setSpeed(speed);
+      leftMotor.forward();
+      rightMotor.backward();
+      angle1 = gyroFetch();
+  }
+  leftMotor.stop(true);
+  rightMotor.stop();
+}
 
 
   /*
@@ -112,8 +158,5 @@ public class Navigation {
     return (int) (360 * distance / (2 * Math.PI * WHEEL_RADIUS));
   }
 
-  private static int convertAngleForMotor(double angle) {
-    return convertDistanceForMotor(Math.PI * WHEEL_BASE * angle / 360.0);
-  }
 
 }

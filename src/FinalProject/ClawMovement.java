@@ -23,4 +23,9 @@ public class ClawMovement {
  public static void holdCan() {
    
  }
+
+public static void releaseCan() {
+  // TODO Auto-generated method stub
+  
+}
 }

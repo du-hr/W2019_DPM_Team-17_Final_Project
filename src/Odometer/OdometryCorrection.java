@@ -102,19 +102,6 @@ public class OdometryCorrection implements Runnable {
 					LCD.drawString("loop_4", 0, 5);
 
 				}
-				
-				/*
-				 * try { // limit the frequency of the beeping Thread.sleep(500); } catch
-				 * (InterruptedException e) { // TODO Auto-generated catch block
-				 * e.printStackTrace(); } }
-				 */
-
-				// TODO Trigger correction (When do I have information to correct?)
-				// TODO Calculate new (accurate) robot position
-
-				// TODO Update odometer with new calculated (and more accurate) vales
-
-				// odometer.setXYT(X, Y, theta);
 
 				// this ensure the odometry correction occurs only once every period
 				correctionEnd = System.currentTimeMillis();

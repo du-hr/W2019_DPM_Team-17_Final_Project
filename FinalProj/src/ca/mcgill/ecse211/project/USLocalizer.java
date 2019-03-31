@@ -25,8 +25,8 @@ class USLocalizer {
 	private EV3UltrasonicSensor usSensor;
 	private int[] currentDist = new int[4];
 	//Parameters related to wall detection (falling and rising edge)
-	private double d = 35.00;
-	private double k = 3;
+	private double d = 40.00;
+	private double k = 5;
 
 	/**
 	 * This is the constructor for the class 

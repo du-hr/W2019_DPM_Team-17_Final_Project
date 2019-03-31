@@ -33,8 +33,8 @@ class ColorDetect {
 	private double[] greenData= new double[10] ;
 	private static final int filterWindowSize = 3;
 	//Initialize the motor used to move the light sensor
-	private static final EV3MediumRegulatedMotor sensorMotor =
-			new EV3MediumRegulatedMotor(LocalEV3.get().getPort("C"));
+	private static final EV3LargeRegulatedMotor sensorMotor =
+			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
 	//Parameters related to the readings obtained from testing (data acquisition)
 	private static final double rMean_REDCAN=0.97, gMean_REDCAN=0.18, bMean_REDCAN=0.11;
 	private static final double rMean_GREENCAN=0.31, gMean_GREENCAN=0.93, bMean_GREENCAN=0.19;

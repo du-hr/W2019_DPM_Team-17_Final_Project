@@ -17,12 +17,16 @@ import lejos.hardware.port.Port;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
+
+import static ca.mcgill.ecse211.project.Project.gyro_sample;
+import static ca.mcgill.ecse211.project.Project.gyro_sp;
+
 import ca.mcgill.ecse211.odometer.*;
 
 class LightLocalizer {
 	//Parameters used to know the location (odometry) and navigate
 	public static int ROTATION_SPEED = 100;
-	private double SENSOR_DIST = 2;
+	private double SENSOR_DIST = 12;
 	private Odometer odometer;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
 	public Navigation navigation;
@@ -33,6 +37,8 @@ class LightLocalizer {
 	private float prevColor = 0;
 	private int numLines = 0;
 	private double[] lineAngle = new double[4];
+	
+	private int DISP = 7;
 
 	/**
 	 * This is the constructor for the class 
@@ -64,7 +70,7 @@ class LightLocalizer {
 		// use a differential filter to detect lines
 		float colordiff = prevColor - colorData[0];
 		prevColor = colorData[0];
-		while (colorData[0] >= 0.41) {//We move forward until we detect a line
+		while (colorData[0] > 0.4) {//We move forward until we detect a line
 			color.fetchSample(colorData, 0);
 			colordiff = prevColor - colorData[0];
 			prevColor = colorData[0];
@@ -75,8 +81,8 @@ class LightLocalizer {
 		//Once a line is detected, we move backward a specific distance
 		leftMotor.stop(true);
 		rightMotor.stop();
-		leftMotor.rotate(convertDistance(Project.WHEEL_RADIUS, -9), true);
-		rightMotor.rotate(convertDistance(Project.WHEEL_RADIUS, -9), false);
+		leftMotor.rotate(convertDistance(Project.WHEEL_RADIUS, -12), true);
+		rightMotor.rotate(convertDistance(Project.WHEEL_RADIUS, -12), false);
 
 	}
 
@@ -87,26 +93,25 @@ class LightLocalizer {
 	public void localize() {
 		leftMotor.setSpeed(ROTATION_SPEED);
 		rightMotor.setSpeed(ROTATION_SPEED);
+		Project.gyrosensor.reset();
 		//Start by getting close to the origin
 		findOrigin();
-		while (numLines < 1) {//Rotate and detect the 4 lines the sensor comes across
+		while (numLines < 4) {//Rotate and detect the 4 lines the sensor comes across
 			leftMotor.forward();
 			rightMotor.backward();
 			color.fetchSample(colorData, 0);
 			float colordiff = prevColor - colorData[0];
 			prevColor = colorData[0];
 			if (colorData[0] <= 0.40) {
-				lineAngle[numLines] = odometer.getXYT()[2];//Store the angle for each line
+				lineAngle[numLines] =gyroFetch();//Store the angle for each line
+				Project.gyrosensor.reset();
 				numLines++;
 				Sound.beep();
 			}
 		}
 		leftMotor.stop(true);
 		rightMotor.stop();
-		
-		leftMotor.rotate(-convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, 15), true);
-		rightMotor.rotate(convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, 15), false);
-		/*double dX, dY, thetax, thetay;//Variables used to calculate the 0° direction and the origin
+		double dX, dY, thetax, thetay;//Variables used to calculate the 0° direction and the origin
 		//From the 4 angles stored, calculate how off from the origin and 0° the robot is
 		thetay = lineAngle[3] - lineAngle[1];
 		thetax = lineAngle[2] - lineAngle[0];
@@ -114,16 +119,40 @@ class LightLocalizer {
 		dY = -1 * SENSOR_DIST * Math.cos(Math.toRadians(thetax / 2));
 		odometer.setXYT(dX, dY, odometer.getXYT()[2]-6);//Set the accurate current position
 		navigation.travelTo(0.0, 0.0);//Navigate to the origin
-		leftMotor.setSpeed(ROTATION_SPEED / 2);
-		rightMotor.setSpeed(ROTATION_SPEED / 2);
+		leftMotor.setSpeed(ROTATION_SPEED);
+		rightMotor.setSpeed(ROTATION_SPEED);
 		//Rotate to be in the 0° direction
-		if (odometer.getXYT()[2] <= 350 && odometer.getXYT()[2] >= 10.0) {
-			leftMotor.rotate(convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, -odometer.getXYT()[2]), true);
-			rightMotor.rotate(-convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, -odometer.getXYT()[2]), false);
+		while (gyroFetch() <= 358 && gyroFetch() >= 2.0) {
+			leftMotor.backward();
+			rightMotor.forward();
+			//leftMotor.rotate(convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, -gyroFetch()), true);
+			//rightMotor.rotate(-convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, -gyroFetch()), false);
 		}
-		navigation.turnTo(Math.PI/2);*/
 		leftMotor.stop(true);
 		rightMotor.stop();
+	}
+	
+	public void startCorner() {
+		int corner = Project.corner;
+		if(corner == 0) {
+			odometer.setXYT(Project.TILE_SIZE, Project.TILE_SIZE, 0.0);
+			Project.gyrosensor.reset();
+		}
+	}
+	
+	private double gyroFetch() {
+		Project.gyro_sp.fetchSample(Project.gyro_sample, 0);
+		angleCorrection();
+		return odometer.getXYT()[2];
+	}
+
+	private void angleCorrection() {
+		Project.gyro_sp.fetchSample(Project.gyro_sample, 0);
+		if (Project.gyro_sample[0] >= 0) {
+			odometer.setXYT(odometer.getXYT()[0], odometer.getXYT()[1],Project.gyro_sample[0]);
+		}else {
+			odometer.setXYT(odometer.getXYT()[0], odometer.getXYT()[1], 360+Project.gyro_sample[0]);
+		}
 	}
 
 	/**

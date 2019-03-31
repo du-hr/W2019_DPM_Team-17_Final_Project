@@ -115,17 +115,17 @@ public class Navigation {
 	}
 
 
-	private static void turnLeft (double angle) {
+	public static void turnLeft (double angle) {
 		leftMotor.rotate(-convertAngleForMotor(Math.abs(angle)),true);
 		rightMotor.rotate(convertAngleForMotor(Math.abs(angle)),false);
 	}
 
-	private static void turnRight (double angle) {
+	public static void turnRight (double angle) {
 		leftMotor.rotate(convertAngleForMotor(Math.abs(angle)),true);
 		rightMotor.rotate(-convertAngleForMotor(Math.abs(angle)),false);
 	}
 
-	private static void turnLeft2(double degree) {
+	public static void turnLeft2(double degree) {
 		if (degree <= 1) {
 			return;
 		}
@@ -146,7 +146,7 @@ public class Navigation {
 		rightMotor.stop();
 	}
 
-	private static void turnRight2(double degree) {
+	public static void turnRight2(double degree) {
 		if(degree <= 1) {
 			return;
 		}

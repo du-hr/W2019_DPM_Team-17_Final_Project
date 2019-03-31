@@ -100,9 +100,12 @@ public class Project {
 		odoThread.start();
 	    USLocalizer USLocalizer = new USLocalizer(odometer, leftMotor, rightMotor, usSensor);
 		LightLocalizer lightLocalizer = new LightLocalizer(odometer, leftMotor, rightMotor);
-		USLocalizer.fallingEdge();
-		lightLocalizer.localize();
+		//USLocalizer.fallingEdge();
+		//gyroSensor.reset();
+		//lightLocalizer.localize();
 		gyrosensor.reset();
+		ClawMovement claw = new ClawMovement();
+		claw.holdCan(); claw.releaseCan();
 		/*odometer.setXYT(TILE_SIZE,TILE_SIZE,0.0);
 		MapDriver map_drive = new MapDriver(odometer, leftMotor, rightMotor);
 		map_drive.drive();*/

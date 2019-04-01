@@ -3,19 +3,18 @@ package FinalProject;
 
 import static FinalProject.Navigation.*;
 import Odometer.OdometryCorrection;
-import lejos.hardware.ev3.LocalEV3;
-import lejos.hardware.port.Port;
-import lejos.hardware.sensor.EV3UltrasonicSensor;
-import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
 import Odometer.OdometerExceptions;
 import static FinalProject.Main.*;
 
 
 public class MapDriver{
-  private static final Port usPort = LocalEV3.get().getPort("S1");
+  private static SampleProvider usSensor;
+  private static float[] usData;
   //default constructor
-  public MapDriver() {
+  public MapDriver(SampleProvider usSensor, float[] usData) {
+    MapDriver.usSensor = usSensor;
+    MapDriver.usData = usData;
   }
 
   public void drive() throws OdometerExceptions{
@@ -42,7 +41,7 @@ public class MapDriver{
     turnTo(0); //turn heading to the positive y axis
   }
 
-  // assume positive y axis is 0 degree axis
+  // positive y axis is 0 degree axis
   public void moveToBridge() throws OdometerExceptions {
     travelTo(1.5, TN_LLy); // approach the bridge from y direction
     travelTo(2,TN_LLy+0.5);
@@ -64,22 +63,8 @@ public class MapDriver{
   }
 
   public void searchCan() {
-    // Setup ultrasonic sensor
-    // 1. Create a port object attached to a physical port (done above)
-    // 2. Create a sensor instance and attach to port
-    // 3. Create a sample provider instance for the above and initialize operating
-    // mode
-    // 4. Create a buffer for the sensor data
-    @SuppressWarnings("resource") // Because we don't bother to close this resource
-    SensorModes usSensor = new EV3UltrasonicSensor(usPort);
-    SampleProvider usValue = usSensor.getMode("Distance"); // usValue provides samples from this instance
-    float[] usData = new float[usValue.sampleSize()]; // usData is the buffer in which data are returned
-    //25
-    
-    
-    
-    
-
+    usSensor.fetchSample(usData, 0);
+    //TODO tile size search
   }
   
   private void detectCanColor() {

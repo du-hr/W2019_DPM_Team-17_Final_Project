@@ -1,8 +1,6 @@
 package FinalProject;
 
 import Odometer.*;
-import lejos.hardware.Button;
-import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
@@ -17,19 +15,32 @@ import lejos.robotics.SampleProvider;
 
 public class Main {
 
-  //get port for US sensor
-  // Motor Objects, and Robot related parameters
-  private static final EV3LargeRegulatedMotor leftMotor =
-      new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
-  private static final EV3LargeRegulatedMotor rightMotor =
-      new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
-  public static final TextLCD lcd = LocalEV3.get().getTextLCD();
+  // Static Resources:
+  // Left motor connected to output A
+  // Right motor connected to output D
+  // Claw motor connected to output B
+  // Color sensor motor connected to output C
+  // Ultrasonic sensor port connected to input S1
+  // Color sensor (front) port connected to input S2
+  // Color sensor (back) sensor port connected to input S3
+  // Gyro sensor port connected to input S4
+  private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
+  private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
+  private static final EV3LargeRegulatedMotor clawMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
+  private static final EV3LargeRegulatedMotor colorSensorMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
+  private static final Port usPort = LocalEV3.get().getPort("S1");
+  private static final Port frontColorPort = LocalEV3.get().getPort("S2");
+  private static final Port backColorPort = LocalEV3.get().getPort("S3");
+  public static final Port gyroPort = LocalEV3.get().getPort("S4");
+  
+  // Robot hardware related parameters:
   public static final double WHEEL_RADIUS = 2.05;
   public static final double WHEEL_BASE = 9.5;
-  public static final double TILE_SIZE = 30.48;
   public static final int ROTATE_SPEED = 50;
   public static final int FORWARD_SPEED = 100;
-  // Parameters related to the map and color detection
+  
+  // Project specifications:
+  public static final double TILE_SIZE = 30.48;
   public static int LLx = 0;
   public static int LLy = 5;
   public static int URx = 4;
@@ -42,18 +53,66 @@ public class Main {
   public static int SZ_LLy = 6;
   public static int SZ_URx = 10;
   public static int SZ_URy = 9;
-  public static int corner = 3;
-  //public static ColorDetect colorDetection = new ColorDetect();
-  public static int TR = 3;
-  public static EV3GyroSensor   gyrosensor;
-  public static SampleProvider  gyro_sp;
-  public static float [] gyro_sample;
-  public static final Port gyroPort = LocalEV3.get().getPort("S4");
-
   
-  public static void main(String[] args) throws OdometerExceptions{
+  private static final TextLCD lcd = LocalEV3.get().getTextLCD();
+  
+  public static void main(String[] args) throws OdometerExceptions {
     
-    System.exit(0);
+    // Setup ultrasonic sensor
+    // 1. Create a port object attached to a physical port (done above)
+    // 2. Create a sensor instance and attach to port
+    // 3. Create a sample provider instance for the above and initialize operating mode
+    // 4. Create a buffer for the sensor data
+    @SuppressWarnings("resource") // Because we don't bother to close this resource
+    SensorModes usSensor = new EV3UltrasonicSensor(usPort);
+    SampleProvider usValue = usSensor.getMode("Distance"); // usValue provides samples from this instance
+    float[] usData = new float[usValue.sampleSize()]; // usData is the buffer in which data are returned
+
+    // Setup color sensor in the front
+    // 1. Create a port object attached to a physical port (done above)
+    // 2. Create a sensor instance and attach to port
+    // 3. Create a sample provider instance for the above and initialize operating mode
+    // 4. Create a buffer for the sensor data
+    @SuppressWarnings("resource") // Because we don't bother to close this resource
+    SensorModes frontColorSensor = new EV3ColorSensor(frontColorPort);
+    SampleProvider frontColorValue = frontColorSensor.getMode("RGB"); // colorValue provides samples from this instance
+    float[] forntColorData = new float[frontColorValue.sampleSize()]; // colorData is the buffer in which data are returned
+    
+    // Setup color sensor in the back
+    // 1. Create a port object attached to a physical port (done above)
+    // 2. Create a sensor instance and attach to port
+    // 3. Create a sample provider instance for the above and initialize operating mode
+    // 4. Create a buffer for the sensor data
+    @SuppressWarnings("resource") // Because we don't bother to close this resource
+    SensorModes backColorSensor = new EV3ColorSensor(backColorPort);
+    SampleProvider backColorValue = backColorSensor.getMode("RGB"); // colorValue provides samples from this instance
+    float[] backColorData = new float[backColorValue.sampleSize()]; // colorData is the buffer in which data are returned
+    
+    // Setup gyro sensor in the back
+    // 1. Create a port object attached to a physical port (done above)
+    // 2. Create a sensor instance and attach to port
+    // 3. Create a sample provider instance for the above and initialize operating mode
+    // 4. Create a buffer for the sensor data
+    @SuppressWarnings("resource") // Because we don't bother to close this resource
+    SensorModes gyroSensor = new EV3GyroSensor(gyroPort);
+    SampleProvider gyroValue = gyroSensor.getMode("Angle"); // gyroValue provides samples from this instance
+    float[] gyroData = new float[gyroValue.sampleSize()]; // gyroData is the buffer in which data are returned
+
+    // Setup the odometer and display
+    Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, WHEEL_BASE, WHEEL_RADIUS);
+    Display display = new Display(lcd); // No need to change
+    OdometryCorrection odometryCorrection = new OdometryCorrection(); 
+    
+    // Setup display threads
+    Thread Display = new Thread(display);
+
+    // Setup odometer related threads
+    Thread odoThread = new Thread(odometer);
+    Thread odoCorrectionThread = new Thread(odometryCorrection);
+    
+    //TODO Set up objects of classes
+    Navigation navigator = new Navigation(odometer, leftMotor, rightMotor, gyroValue, gyroData);
+    MapDriver mapDriver = new MapDriver(usValue, usData);
   }
 }
 

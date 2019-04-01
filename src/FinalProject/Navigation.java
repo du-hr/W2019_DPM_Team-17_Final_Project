@@ -2,6 +2,7 @@ package FinalProject;
 
 import Odometer.Odometer;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.robotics.SampleProvider;
 import static FinalProject.Main.*;
 
 public class Navigation {
@@ -9,18 +10,17 @@ public class Navigation {
   private static EV3LargeRegulatedMotor leftMotor;
   private static EV3LargeRegulatedMotor rightMotor;
   private static boolean isNavigating = false;
+  private static SampleProvider gyroSensor;
+  private static float[] gyroData;
 
   public Navigation(Odometer odometer, EV3LargeRegulatedMotor leftMotor,
-      EV3LargeRegulatedMotor rightMotor) {
+      EV3LargeRegulatedMotor rightMotor, SampleProvider gyroSensor, float[] gyroData) {
+    Navigation.odometer = odometer;
+    Navigation.leftMotor = leftMotor;
+    Navigation.rightMotor = rightMotor;
+    Navigation.gyroSensor = gyroSensor;
+    Navigation.gyroData = gyroData;
   }
-
-  public static Navigation getNavigator(Odometer odometer, EV3LargeRegulatedMotor leftMotor,
-      EV3LargeRegulatedMotor rightMotor) {
-
-    Navigation Navigator = new Navigation(odometer, leftMotor, rightMotor);
-    return Navigator;
-  }
-
 
   public static void travelTo(double x, double y) {
 
@@ -81,62 +81,61 @@ public class Navigation {
       turnRight(angle);
     }
   }
-  private static double gyroFetch() {
-    gyro_sp.fetchSample(gyro_sample, 0);
-    angleCorrection();
-    return odometer.getXYT()[2];
-}
 
-private static void angleCorrection() {
-    gyro_sp.fetchSample(gyro_sample, 0);
-    if (gyro_sample[0] >= 0) {
-        odometer.setXYT(odometer.getXYT()[0], odometer.getXYT()[1],gyro_sample[0]);
-    }else {
-        odometer.setXYT(odometer.getXYT()[0], odometer.getXYT()[1], 360+gyro_sample[0]);
+  private static void angleCorrection() {
+    gyroSensor.fetchSample(gyroData, 0);
+    if (gyroData[0] >= 0) {
+      odometer.setXYT(odometer.getXYT()[0], odometer.getXYT()[1], gyroData[0]);
+    } else {
+      odometer.setXYT(odometer.getXYT()[0], odometer.getXYT()[1], 360 + gyroData[0]);
     }
-}
-
-public static void turnLeft(double degree) {
-  if (degree <= 1) {
-      return;
   }
-  int speed;
-  double minAngle = 0;
-  double angle = gyroFetch();
-  double angle1 = gyroFetch();
-  while((Math.abs(angle - angle1 - degree)>=1) && (Math.abs((angle1 - angle) - (360-degree))>=1)){
-      minAngle = Math.min((Math.abs(angle - angle1 - degree)), Math.abs((angle1 - angle) - (360-degree)));
-      speed = (int)(80 - 25/(minAngle+1));
+
+  public static void turnLeft(double degree) {
+    if (degree <= 1) {
+      return;
+    }
+    int speed;
+    double minAngle = 0;
+    double angle = getGyroData();
+    double angle1 = getGyroData();
+    while ((Math.abs(angle - angle1 - degree) >= 1)
+        && (Math.abs((angle1 - angle) - (360 - degree)) >= 1)) {
+      minAngle = Math.min((Math.abs(angle - angle1 - degree)),
+          Math.abs((angle1 - angle) - (360 - degree)));
+      speed = (int) (80 - 25 / (minAngle + 1));
       leftMotor.setSpeed(speed);
       rightMotor.setSpeed(speed);
       leftMotor.backward();
       rightMotor.forward();
-      angle1 = gyroFetch();
+      angle1 = getGyroData();
+    }
+    leftMotor.stop(true);
+    rightMotor.stop();
   }
-  leftMotor.stop(true);
-  rightMotor.stop();
-}
 
-public static void turnRight(double degree) {
-  if(degree <= 1) {
+  public static void turnRight(double degree) {
+    if (degree <= 1) {
       return;
-  }
-  double minAngle = 0;
-  int speed;
-  double angle = gyroFetch();
-  double angle1 = gyroFetch();
-  while((Math.abs(angle1 - angle - degree)>=1) && (Math.abs((angle - angle1) - (360-degree))>=1)){
-      minAngle = Math.min((Math.abs(angle1 - angle - degree)), Math.abs((angle - angle1) - (360-degree)));
-      speed = (int)(80 - 25/(minAngle+1));
+    }
+    double minAngle = 0;
+    int speed;
+    double angle = getGyroData();
+    double angle1 = getGyroData();
+    while ((Math.abs(angle1 - angle - degree) >= 1)
+        && (Math.abs((angle - angle1) - (360 - degree)) >= 1)) {
+      minAngle = Math.min((Math.abs(angle1 - angle - degree)),
+          Math.abs((angle - angle1) - (360 - degree)));
+      speed = (int) (80 - 25 / (minAngle + 1));
       leftMotor.setSpeed(speed);
       rightMotor.setSpeed(speed);
       leftMotor.forward();
       rightMotor.backward();
-      angle1 = gyroFetch();
+      angle1 = getGyroData();
+    }
+    leftMotor.stop(true);
+    rightMotor.stop();
   }
-  leftMotor.stop(true);
-  rightMotor.stop();
-}
 
 
   /*
@@ -156,6 +155,16 @@ public static void turnRight(double degree) {
    */
   private static int convertDistanceForMotor(double distance) {
     return (int) (360 * distance / (2 * Math.PI * WHEEL_RADIUS));
+  }
+
+  // gets the data from the color sensor, and returns a value corresponding
+  // to the overall "brightness".
+  private static double getGyroData() {
+    gyroSensor.fetchSample(gyroData, 0);
+    // we correct the angle in odometer and return it here as the
+    // reading of heading angle from gyro sensor
+    angleCorrection();
+    return odometer.getXYT()[2];
   }
 
 

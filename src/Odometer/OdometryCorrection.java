@@ -11,6 +11,8 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
 
+//TODO 
+//Imported from Lab2. Need to be updated.
 public class OdometryCorrection implements Runnable {
 	private static final long CORRECTION_PERIOD = 10;
 	private static final double TILE_SIZE = 30.48;

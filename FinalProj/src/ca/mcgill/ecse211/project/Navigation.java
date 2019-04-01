@@ -34,7 +34,7 @@ public class Navigation {
 		return navigator;
 	}
 
-	public static void travelTo(double x, double y) {
+	public void travelTo(double x, double y) {
 
 		//x = x * TILE_SIZE;
 		//y = y * TILE_SIZE;
@@ -91,8 +91,6 @@ public class Navigation {
 		//Replace previous line of code with previous comment to test correction
 		//Also change turnRight and turnLeft with turnRight2 and turnLeft2
 		double angle = heading-theta;
-
-
 		if(angle < -180.0) {
 			//angle = angle + 360;
 			//turnRight(angle);
@@ -102,7 +100,6 @@ public class Navigation {
 			//angle = angle - 360;
 			//turnLeft(angle);
 			turnLeft2(360 - angle);
-
 		} 
 		else if (angle < 0) {
 			//turnLeft(angle);

@@ -26,9 +26,7 @@ import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
 
 
-
 public class Project {
-
 	//get port for US sensor
 	private static final Port usPort = LocalEV3.get().getPort("S1"); 		
 	private static final EV3UltrasonicSensor usSensor = new EV3UltrasonicSensor(usPort);
@@ -100,12 +98,10 @@ public class Project {
 		odoThread.start();
 	    USLocalizer USLocalizer = new USLocalizer(odometer, leftMotor, rightMotor, usSensor);
 		LightLocalizer lightLocalizer = new LightLocalizer(odometer, leftMotor, rightMotor);
-		//USLocalizer.fallingEdge();
-		//gyroSensor.reset();
-		//lightLocalizer.localize();
+		USLocalizer.fallingEdge();
 		gyrosensor.reset();
-		ClawMovement claw = new ClawMovement();
-		claw.holdCan(); claw.releaseCan();
+		lightLocalizer.localize();
+		gyrosensor.reset();
 		/*odometer.setXYT(TILE_SIZE,TILE_SIZE,0.0);
 		MapDriver map_drive = new MapDriver(odometer, leftMotor, rightMotor);
 		map_drive.drive();*/

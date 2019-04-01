@@ -24,10 +24,8 @@ public class MapDriver {
   
   public void moveToTunnel() {
     navigation.travelTo(1.5 * TILE_SIZE, 1.5 * TILE_SIZE);// no odometry correction here
-    
     double x = 1.5 * TILE_SIZE;
-    double y = (TN_LLy + 0.5) * TILE_SIZE;
-    
+    double y = (TN_LLy + 0.5) * TILE_SIZE;    
     navigation.travelTo(x,y);
     
   }

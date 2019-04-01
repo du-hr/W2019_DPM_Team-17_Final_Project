@@ -36,9 +36,8 @@ class LightLocalizer {
 	private float[] colorData;
 	private float prevColor = 0;
 	private int numLines = 0;
+	private int timer = 0;
 	private double[] lineAngle = new double[4];
-	
-	private int DISP = 7;
 
 	/**
 	 * This is the constructor for the class 
@@ -70,10 +69,10 @@ class LightLocalizer {
 		// use a differential filter to detect lines
 		float colordiff = prevColor - colorData[0];
 		prevColor = colorData[0];
-		while (colorData[0] > 0.4) {//We move forward until we detect a line
+		while (colordiff < 0.05) {//We move forward until we detect a line
 			color.fetchSample(colorData, 0);
 			colordiff = prevColor - colorData[0];
-			prevColor = colorData[0];
+			//prevColor = colorData[0];
 			leftMotor.forward();
 			rightMotor.forward();
 		}
@@ -94,6 +93,8 @@ class LightLocalizer {
 		leftMotor.setSpeed(ROTATION_SPEED);
 		rightMotor.setSpeed(ROTATION_SPEED);
 		Project.gyrosensor.reset();
+		color.fetchSample(colorData, 0);
+		prevColor = colorData[0];
 		//Start by getting close to the origin
 		findOrigin();
 		while (numLines < 4) {//Rotate and detect the 4 lines the sensor comes across
@@ -101,10 +102,11 @@ class LightLocalizer {
 			rightMotor.backward();
 			color.fetchSample(colorData, 0);
 			float colordiff = prevColor - colorData[0];
-			prevColor = colorData[0];
-			if (colorData[0] <= 0.40) {
+			//prevColor = colorData[0];
+			timer++;
+			if (colordiff >= 0.05) {
+				timer = 0;
 				lineAngle[numLines] =gyroFetch();//Store the angle for each line
-				Project.gyrosensor.reset();
 				numLines++;
 				Sound.beep();
 			}
@@ -122,16 +124,14 @@ class LightLocalizer {
 		leftMotor.setSpeed(ROTATION_SPEED);
 		rightMotor.setSpeed(ROTATION_SPEED);
 		//Rotate to be in the 0° direction
-		while (gyroFetch() <= 358 && gyroFetch() >= 2.0) {
-			leftMotor.backward();
-			rightMotor.forward();
-			//leftMotor.rotate(convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, -gyroFetch()), true);
-			//rightMotor.rotate(-convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, -gyroFetch()), false);
+		if (odometer.getXYT()[2] <= 350 && odometer.getXYT()[2] >= 10.0) {
+			leftMotor.rotate(convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, -odometer.getXYT()[2]), true);
+			rightMotor.rotate(-convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, -odometer.getXYT()[2]), false);
 		}
 		leftMotor.stop(true);
 		rightMotor.stop();
 	}
-	
+
 	public void startCorner() {
 		int corner = Project.corner;
 		if(corner == 0) {
@@ -139,7 +139,7 @@ class LightLocalizer {
 			Project.gyrosensor.reset();
 		}
 	}
-	
+
 	private double gyroFetch() {
 		Project.gyro_sp.fetchSample(Project.gyro_sample, 0);
 		angleCorrection();

@@ -39,21 +39,21 @@ public class Project {
 	public static final double WHEEL_RADIUS = 2.05;
 	public static final double WHEEL_BASE = 9.5;
 	public static final double TILE_SIZE = 30.48;
-	public static final int ROTATE_SPEED = 50;
-	public static final int FORWARD_SPEED = 100;
+	public static final int ROTATE_SPEED = 75;
+	public static final int FORWARD_SPEED = 150;
 	// Parameters related to the map and color detection
 	public static int LLx = 0;
-	public static int LLy = 5;
-	public static int URx = 4;
+	public static int LLy = 6;
+	public static int URx = 2;
 	public static int URy = 9;
-	public static int TN_LLx = 4;
+	public static int TN_LLx = 2;
 	public static int TN_LLy = 7;
-	public static int TN_URx = 6;
-	public static int TN_URy = 6;
-	public static int SZ_LLx = 7;
+	public static int TN_URx = 3;
+	public static int TN_URy = 8;
+	public static int SZ_LLx = 4;
 	public static int SZ_LLy = 6;
-	public static int SZ_URx = 10;
-	public static int SZ_URy = 9;
+	public static int SZ_URx = 6;
+	public static int SZ_URy = 8;
 	public static int corner = 3;
 	public static ColorDetect colorDetection = new ColorDetect();
 	public static int TR = 3;
@@ -96,15 +96,17 @@ public class Project {
 		//Uncomment to use wifi Wifi wifi = new Wifi();
 		Thread odoThread = new Thread(odometer);
 		odoThread.start();
-	    USLocalizer USLocalizer = new USLocalizer(odometer, leftMotor, rightMotor, usSensor);
+	    /*USLocalizer USLocalizer = new USLocalizer(odometer, leftMotor, rightMotor, usSensor);
 		LightLocalizer lightLocalizer = new LightLocalizer(odometer, leftMotor, rightMotor);
 		USLocalizer.fallingEdge();
 		gyrosensor.reset();
 		lightLocalizer.localize();
+		gyrosensor.reset();*/
+		odometer.setXYT(TILE_SIZE,8*TILE_SIZE,0.0);
 		gyrosensor.reset();
-		/*odometer.setXYT(TILE_SIZE,TILE_SIZE,0.0);
 		MapDriver map_drive = new MapDriver(odometer, leftMotor, rightMotor);
-		map_drive.drive();*/
+		Navigation nav = new Navigation(odometer, leftMotor, rightMotor);
+		map_drive.drive();
 		
 		//Stop the program if the user presses another button
 		while (Button.waitForAnyPress() != Button.ID_ESCAPE);

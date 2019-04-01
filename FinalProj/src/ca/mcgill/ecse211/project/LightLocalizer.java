@@ -119,12 +119,12 @@ class LightLocalizer {
 		thetax = lineAngle[2] - lineAngle[0];
 		dX = -1 * SENSOR_DIST * Math.cos(Math.toRadians(thetay / 2));
 		dY = -1 * SENSOR_DIST * Math.cos(Math.toRadians(thetax / 2));
-		odometer.setXYT(dX, dY, odometer.getXYT()[2]-6);//Set the accurate current position
+		odometer.setXYT(dX, dY, odometer.getXYT()[2]-10);//Set the accurate current position
 		navigation.travelTo(0.0, 0.0);//Navigate to the origin
 		leftMotor.setSpeed(ROTATION_SPEED);
 		rightMotor.setSpeed(ROTATION_SPEED);
 		//Rotate to be in the 0° direction
-		if (odometer.getXYT()[2] <= 350 && odometer.getXYT()[2] >= 10.0) {
+		if (odometer.getXYT()[2] <= 358 && odometer.getXYT()[2] >= 2.0) {
 			leftMotor.rotate(convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, -odometer.getXYT()[2]), true);
 			rightMotor.rotate(-convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, -odometer.getXYT()[2]), false);
 		}

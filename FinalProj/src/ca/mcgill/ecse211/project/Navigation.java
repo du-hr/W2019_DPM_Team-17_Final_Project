@@ -92,17 +92,17 @@ public class Navigation {
 		//Also change turnRight and turnLeft with turnRight2 and turnLeft2
 		double angle = heading-theta;
 		if(angle < -180.0) {
-			//angle = angle + 360;
-			//turnRight(angle);
-			turnRight2(360 - angle);
+			angle = angle + 360;
+			turnRight2(angle);
+			//turnRight2(360 - angle);
 		} 
 		else if (angle > 180.0) {
 			//angle = angle - 360;
-			//turnLeft(angle);
+			//turnLeft2(angle);
 			turnLeft2(360 - angle);
 		} 
 		else if (angle < 0) {
-			//turnLeft(angle);
+			//turnLeft(Math.abs(angle));
 			turnLeft2(Math.abs(angle));
 		}
 		else if(angle > 0) {
@@ -110,7 +110,6 @@ public class Navigation {
 			turnRight2(angle);
 		}
 	}
-
 
 	public static void turnLeft (double angle) {
 		leftMotor.rotate(-convertAngleForMotor(Math.abs(angle)),true);
@@ -185,6 +184,5 @@ public class Navigation {
 	private static int convertAngleForMotor(double angle){
 		return convertDistanceForMotor(Math.PI*WHEEL_BASE*angle/360.0);
 	}
-
 
 }

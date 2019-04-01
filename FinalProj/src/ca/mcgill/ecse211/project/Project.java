@@ -105,7 +105,6 @@ public class Project {
 		odometer.setXYT(TILE_SIZE,8*TILE_SIZE,0.0);
 		gyrosensor.reset();
 		MapDriver map_drive = new MapDriver(odometer, leftMotor, rightMotor);
-		Navigation nav = new Navigation(odometer, leftMotor, rightMotor);
 		map_drive.drive();
 		
 		//Stop the program if the user presses another button

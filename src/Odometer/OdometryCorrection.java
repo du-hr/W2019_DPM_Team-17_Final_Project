@@ -21,6 +21,7 @@ public class OdometryCorrection implements Runnable {
 	private int counterX = 0;
 	private int counterY = 0;
 	private static final double offset = 3.2;
+	public static boolean isCorrecting = false;
 
 	private Odometer odometer;
 	Port portColor = LocalEV3.get().getPort("S4"); // 1. Get port
@@ -50,6 +51,7 @@ public class OdometryCorrection implements Runnable {
 	 */
 	// run method (required for Thread)
 	public void run() {
+	  while (isCorrecting = true) {
 		long correctionStart, correctionEnd;
 		Sound.setVolume(50);
 		odometer.setXYT(x0, y0, 0.0);
@@ -119,5 +121,6 @@ public class OdometryCorrection implements Runnable {
 			
 
 		}
+	}
 	}
 }

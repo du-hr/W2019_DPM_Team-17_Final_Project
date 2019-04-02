@@ -22,7 +22,7 @@ public class CanWeightDetection {
     return canWeightDetector;
 }
   
-  public void doWeightDetection() {
+  public static void detectCanWeight() {
     // TODO Coordinate the relative position of claw, color sensor, left, and right wheel to prepare
     // for weight detection
     

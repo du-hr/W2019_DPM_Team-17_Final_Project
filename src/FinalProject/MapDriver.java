@@ -3,35 +3,37 @@ package FinalProject;
 
 import static FinalProject.Navigation.*;
 import Odometer.OdometryCorrection;
-import lejos.robotics.SampleProvider;
+import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import Odometer.OdometerExceptions;
 import static FinalProject.Main.*;
 
 
 public class MapDriver{
-  private static SampleProvider usSensor;
-  private static float[] usData;
+  private EV3LargeRegulatedMotor leftMotor;
+  private EV3LargeRegulatedMotor rightMotor;
   //default constructor
-  public MapDriver(SampleProvider usSensor, float[] usData) {
-    MapDriver.usSensor = usSensor;
-    MapDriver.usData = usData;
+  public MapDriver(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor) {
+    this.leftMotor = leftMotor;
+    this.rightMotor = rightMotor;
   }
-
+  
   public void drive() throws OdometerExceptions{
-    OdometryCorrection odometryCorrection = new OdometryCorrection();
-    Thread odoCorrectionThread = new Thread(odometryCorrection);
+    // repeat for 5 times
+    for (int i = 0; i<5; i++) {
     moveToStartingPosition();
-    odoCorrectionThread.start();
+    OdometryCorrection.isCorrecting = true;
     moveToBridge();
-    odoCorrectionThread.interrupt();
+    OdometryCorrection.isCorrecting = false;
     travelThroughBridge();
-    odoCorrectionThread.start();
+    OdometryCorrection.isCorrecting = true;
     moveToSearchZone();
-    odoCorrectionThread.interrupt();
+    OdometryCorrection.isCorrecting = false;
+    CanScanner.isScanning = true;
     searchCan();
     detectCanColor();
     detectCanWeight();
     moveCan();
+    }
   }
 
 
@@ -59,18 +61,30 @@ public class MapDriver{
     travelTo(SZ_LLx-1,TN_LLy + 0.5);
     travelTo(SZ_LLx-0.5,TN_LLy);
     travelTo(SZ_LLx-0.5,SZ_LLy);
-    turnTo(0); //turn heading to the positive y axis
   }
-
+  
   public void searchCan() {
-    usSensor.fetchSample(usData, 0);
     //TODO tile size search
+    travelTo(SZ_LLx,SZ_LLy);
+    turnTo(0); // Position the heading of the robot to positive y axis
+    int SZ_length = SZ_URy - SZ_LLy;
+    int SZ_width = SZ_URx - SZ_LLx;
+    int i = 0;
+    while (i< SZ_length) {
+      turnTo(90);
+      turnTo(0);
+      i++;
+      travelTo(SZ_LLx,SZ_LLy+i);
+    }
+    
   }
   
   private void detectCanColor() {
+    detectCanColor();
   }
   
   private void detectCanWeight() {
+    detectCanWeight();
   }
   
   public void moveCan() {

@@ -11,13 +11,6 @@ public class ClawMovement {
     this.clawMotor = clawMotor;
     
   }
-  
-  public static ClawMovement getClawMovement(EV3MediumRegulatedMotor clawMotor) {
-
-      ClawMovement clawMover = new ClawMovement(clawMotor);
-      return clawMover;
-  }
-
 
   
  public static void holdCan() {

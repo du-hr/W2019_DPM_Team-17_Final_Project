@@ -51,7 +51,7 @@ public class OdometryCorrection implements Runnable {
 	 */
 	// run method (required for Thread)
 	public void run() {
-	  while (isCorrecting = true) {
+	  while (isCorrecting == true) {
 		long correctionStart, correctionEnd;
 		Sound.setVolume(50);
 		odometer.setXYT(x0, y0, 0.0);

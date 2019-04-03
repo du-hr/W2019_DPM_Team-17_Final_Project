@@ -56,7 +56,7 @@ public class Main {
   
   private static final TextLCD lcd = LocalEV3.get().getTextLCD();
   
-  public static void main(String[] args) throws OdometerExceptions {
+  public static void main(String[] args) throws OdometerExceptions, InterruptedException {
     
     // Setup ultrasonic sensor
     // 1. Create a port object attached to a physical port (done above)
@@ -112,7 +112,7 @@ public class Main {
     
     //TODO Set up objects of classes
     Navigation navigator = new Navigation(odometer, leftMotor, rightMotor, gyroValue, gyroData);
-    MapDriver mapDriver = new MapDriver(leftMotor, rightMotor);
+    MapDriver mapDriver = new MapDriver();
     mapDriver.drive();
   }
 }

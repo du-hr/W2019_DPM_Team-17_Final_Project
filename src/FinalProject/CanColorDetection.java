@@ -22,7 +22,7 @@ public class CanColorDetection {
     CanColorDetection canColorDetector = new CanColorDetection(colorSensor, colorData, colorSensorMotor);
     return canColorDetector;
 }
-  public static void detectColor() {
+  public static void detectCanColor() {
   }
   
 }

@@ -112,7 +112,7 @@ public class Main {
     
     //TODO Set up objects of classes
     Navigation navigator = new Navigation(odometer, leftMotor, rightMotor, gyroValue, gyroData);
-    MapDriver mapDriver = new MapDriver();
+    MapDriver mapDriver = new MapDriver(odometer);
     mapDriver.drive();
   }
 }

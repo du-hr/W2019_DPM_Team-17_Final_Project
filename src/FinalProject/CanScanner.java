@@ -45,6 +45,8 @@ public class CanScanner implements Runnable {
         if (usData[0] <= TIGGER_DISTANCE) {
           leftMotor.stop();
           rightMotor.stop();
+          detectedCanDistance = usData[0];
+          detectedCanHeading = angle;
           Sound.beepSequenceUp();
           isScanning = false;
         }

@@ -3,9 +3,7 @@ package FinalProject;
 
 import static FinalProject.Navigation.*;
 import java.util.concurrent.TimeUnit;
-import Odometer.OdometryCorrection;
 import Odometer.Odometer;
-import Odometer.OdometerExceptions;
 import static FinalProject.Main.*;
 import static FinalProject.CanScanner.*;
 
@@ -16,58 +14,60 @@ public class MapDriver{
   private static int counter_2;
   private static int counter_3;
   private static int counter_4;
+  private static double islandX;
+  private static double islandY;
+  private static double bridgeX;
+  private static double bridgeY;
+  
   private Odometer odometer;
   //default constructor
   public MapDriver(Odometer odometer) {
     this.odometer = odometer;
   }
   
-  public void drive() throws OdometerExceptions, InterruptedException{
+  public void drive() throws InterruptedException{
     // repeat for 5 times
     for (int i=0; i<5; i++) {
-    moveToStartingPosition();
-    OdometryCorrection.isCorrecting = true;
     moveToBridge();
-    OdometryCorrection.isCorrecting = false;
     travelThroughBridge();
-    OdometryCorrection.isCorrecting = true;
     moveToSearchZone();
-    OdometryCorrection.isCorrecting = false;
     searchCan();
     }
   }
 
-
-  private void moveToStartingPosition() {
+  public void moveToBridge() {
     ClawMovement.holdCan();
-    travelTo(1.5, 1); // travel to start point after doing localization
-    turnTo(0); //turn heading to the positive y axis
-  }
-
-  // positive y axis is 0 degree axis
-  public void moveToBridge() throws OdometerExceptions {
-    travelTo(1.5, TN_LLy); // approach the bridge from y direction
-    travelTo(2,TN_LLy+0.5);
-    turnTo(90); //turn heading to the positive x axis
-    travelTo(TN_LLx,TN_LLy+0.5);// approach the bridge from x direction
+    if (Math.abs(TN_URy-TN_LLy) < Math.abs(TN_URx-TN_LLx)){
+      bridgeY = TN_LLy + 0.5;
+      bridgeX = TN_LLx;
+    }
+    else {
+      bridgeX = TN_LLx + 0.5;
+      bridgeY = TN_LLy;
+    }
+    travelTo(bridgeX,bridgeY);
   }
 
 
   public void travelThroughBridge() {
-    travelTo(TN_URx+1,TN_LLy + 0.5);
+    if (Math.abs(TN_URy-TN_LLy) < Math.abs(TN_URx-TN_LLx)){
+      islandY = TN_LLy + 0.5;
+      islandX = TN_LLx + Math.abs(TN_URx-TN_LLx) + 0.5;
+    }
+    else {
+      islandX = TN_LLx + 0.5;
+      islandY = TN_LLy + Math.abs(TN_URy-TN_LLy) + 0.5;
+    }
+    travelTo(islandX,islandY);
     ClawMovement.releaseCan();
   }
 
-  public void moveToSearchZone() throws OdometerExceptions {
-    travelTo(SZ_LLx-1,TN_LLy + 0.5);
-    travelTo(SZ_LLx-0.5,TN_LLy);
-    travelTo(SZ_LLx-0.5,SZ_LLy);
-    OdometryCorrection.isCorrecting = false;
+  public void moveToSearchZone() {
     travelTo(SZ_LLx,SZ_LLy);
     turnTo(0);
   }
   
-  public void searchCan() throws InterruptedException, OdometerExceptions {
+  public void searchCan() throws InterruptedException{
     int SZ_length = SZ_URy - SZ_LLy;
     int SZ_width = SZ_URx - SZ_LLx;
     
@@ -78,13 +78,14 @@ public class MapDriver{
       // Position the heading of the robot to positive y axis
       turnTo(0);
       // start the CanScanner thread
+      CanScanner.initialHeading = 0;
       isScanning = true;
       // let the program sleep for 3 seconds to leave 
       // enough time for scanning
       TimeUnit.SECONDS.sleep(3);
       // detected a can while scanning
       if (isScanning == false) {
-        moveToCan(CanScanner.detectedCanHeading,CanScanner.detectedCanDistance);
+        moveToCan(CanScanner.degreesOfTurning,CanScanner.detectedCanDistance);
         doColorDetection();
         doWeightDetection();
         moveCanBack();
@@ -112,6 +113,7 @@ public class MapDriver{
       travelTo(SZ_LLx+counter_2,SZ_URy);
       // Position the heading of the robot to positive x axis
       turnTo(90);
+      CanScanner.initialHeading = 90;
       // start the CanScanner thread
       isScanning = true;
       // let the program sleep for 3 seconds to leave 
@@ -119,7 +121,7 @@ public class MapDriver{
       TimeUnit.SECONDS.sleep(3);
       // detected a can while scanning
       if (isScanning == false) {
-        moveToCan(CanScanner.detectedCanHeading,CanScanner.detectedCanDistance);
+        moveToCan(CanScanner.degreesOfTurning,CanScanner.detectedCanDistance);
         doColorDetection();
         doWeightDetection();
         moveCanBack();
@@ -149,13 +151,14 @@ public class MapDriver{
       // Position the heading of the robot to negative y axis
       turnTo(180);
       // start the CanScanner thread
+      CanScanner.initialHeading = 180;
       isScanning = true;
       // let the program sleep for 3 seconds to leave 
       // enough time for scanning
       TimeUnit.SECONDS.sleep(3);
       // detected a can while scanning
       if (isScanning == false) {
-        moveToCan(CanScanner.detectedCanHeading,CanScanner.detectedCanDistance);
+        moveToCan(CanScanner.degreesOfTurning,CanScanner.detectedCanDistance);
         doColorDetection();
         doWeightDetection();
         moveCanBack();
@@ -184,13 +187,14 @@ public class MapDriver{
       // Position the heading of the robot to negative x axis
       turnTo(-90);
       // start the CanScanner thread
+      CanScanner.initialHeading = -90;
       isScanning = true;
       // let the program sleep for 3 seconds to leave 
       // enough time for scanning
       TimeUnit.SECONDS.sleep(3);
       // detected a can while scanning
       if (isScanning == false) {
-        moveToCan(CanScanner.detectedCanHeading,CanScanner.detectedCanDistance);
+        moveToCan(CanScanner.degreesOfTurning,CanScanner.detectedCanDistance);
         doColorDetection();
         doWeightDetection();
         moveCanBack();
@@ -213,16 +217,43 @@ public class MapDriver{
   }
   
 
-  // TODO NOT COMPLETED
   private void moveToCan(double detectedCanHeading, double detectedCanDistance) {
-    
+    detectedCanDistance = detectedCanDistance / 180 * Math.PI; // CONVERT TO RADIAN
     double[] odoData = odometer.getXYT();
-    double currentX = odoData[0];
-    double currentY = odoData[1];
-    double canX = currentX + detectedCanDistance * Math.sin(detectedCanHeading);
-    double canY = currentY + detectedCanDistance * Math.cos(detectedCanHeading);
-    travelTo(canX,canY);
-    travelTo(currentX,currentY); // move back
+    double scanningPositionX = odoData[0];
+    double scanningPositionY = odoData[1];
+    double canPositionX;
+    double canPositionY;
+    
+    
+    if (CanScanner.initialHeading == 0) {
+      canPositionX = scanningPositionX + detectedCanDistance * Math.sin(detectedCanHeading);
+      canPositionY = scanningPositionY + detectedCanDistance * Math.cos(detectedCanHeading);
+      travelTo(canPositionX,canPositionY);
+      travelTo(scanningPositionX,scanningPositionY);
+      turnTo(0);
+    }
+    if (CanScanner.initialHeading == 90) {
+      canPositionX = scanningPositionX + detectedCanDistance * Math.cos(detectedCanHeading);
+      canPositionY = scanningPositionY - detectedCanDistance * Math.sin(detectedCanHeading);
+      travelTo(canPositionX,canPositionY);
+      travelTo(scanningPositionX,scanningPositionY);
+      turnTo(90);
+    }
+    if (CanScanner.initialHeading == 180) {
+      canPositionX = scanningPositionX - detectedCanDistance * Math.sin(detectedCanHeading);
+      canPositionY = scanningPositionY - detectedCanDistance * Math.cos(detectedCanHeading);
+      travelTo(canPositionX,canPositionY);
+      travelTo(scanningPositionX,scanningPositionY);
+      turnTo(180);
+    }
+    if (CanScanner.initialHeading == -90) {
+      canPositionX = scanningPositionX - detectedCanDistance * Math.cos(detectedCanHeading);
+      canPositionY = scanningPositionY + detectedCanDistance * Math.sin(detectedCanHeading);
+      travelTo(canPositionX,canPositionY);
+      travelTo(scanningPositionX,scanningPositionY);
+      turnTo(-90);
+    }
   }
 
   private void doColorDetection() {
@@ -234,5 +265,32 @@ public class MapDriver{
   }
   
   public void moveCanBack() {
+    if (CanScanner.initialHeading == 0) {
+      travelTo(SZ_LLx,SZ_LLy);
+      goHome();
+    }
+    if (CanScanner.initialHeading == 90) {
+      travelTo(SZ_LLx,SZ_URy);
+      travelTo(SZ_LLx,SZ_LLy);
+      goHome();
+    }
+    if (CanScanner.initialHeading == 180) {
+      travelTo(SZ_URx,SZ_URy);
+      travelTo(SZ_LLx,SZ_URy);
+      travelTo(SZ_LLx,SZ_LLy);
+      goHome();
+    }
+    if (CanScanner.initialHeading == -90) {
+      travelTo(SZ_URx,SZ_LLy);
+      travelTo(SZ_LLx,SZ_LLy);
+      goHome();
+    }
+  }
+
+  private void goHome() {
+    travelTo(islandX,islandY);
+    travelTo(bridgeX,bridgeY);
+    travelTo(0.5,0.5);
+    ClawMovement.releaseCan();
   }
 }

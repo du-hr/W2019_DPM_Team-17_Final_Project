@@ -101,18 +101,18 @@ public class Main {
     // Setup the odometer and display
     Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor, WHEEL_BASE, WHEEL_RADIUS);
     Display display = new Display(lcd); // No need to change
-    OdometryCorrection odometryCorrection = new OdometryCorrection(); 
-    
+
     // Setup display threads
     Thread Display = new Thread(display);
 
     // Setup odometer related threads
     Thread odoThread = new Thread(odometer);
-    Thread odoCorrectionThread = new Thread(odometryCorrection);
     
     //TODO Set up objects of classes
     Navigation navigator = new Navigation(odometer, leftMotor, rightMotor, gyroValue, gyroData);
     MapDriver mapDriver = new MapDriver(odometer);
+    USLocalization.doUSLocalization();
+    LightLocalization.doLightLocalization();
     mapDriver.drive();
   }
 }

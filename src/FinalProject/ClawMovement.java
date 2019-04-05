@@ -9,7 +9,6 @@ public class ClawMovement {
   public ClawMovement(EV3MediumRegulatedMotor clawMotor){
     
     this.clawMotor = clawMotor;
-    
   }
 
   
@@ -17,8 +16,7 @@ public class ClawMovement {
    
  }
 
-public static void releaseCan() {
-  // TODO Auto-generated method stub
-  
-}
+  public static void releaseCan() {
+    
+  }
 }

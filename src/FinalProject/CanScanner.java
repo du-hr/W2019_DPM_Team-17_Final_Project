@@ -15,7 +15,7 @@ public class CanScanner implements Runnable {
   private static final double TIGGER_DISTANCE = 30.48;
   public static boolean isScanning = false;
   public static double initialHeading;
-  public static double detectedCanHeading;
+  public static double degreesOfTurning;
   public static double detectedCanDistance;
 
 
@@ -46,8 +46,8 @@ public class CanScanner implements Runnable {
           leftMotor.stop();
           rightMotor.stop();
           detectedCanDistance = usData[0];
-          detectedCanHeading = angle;
-          Sound.beepSequenceUp();
+          // the angle the robot turns on each side of the search zone
+          degreesOfTurning = angle-initialHeading;
           isScanning = false;
         }
       }

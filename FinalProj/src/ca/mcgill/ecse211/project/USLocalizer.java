@@ -45,6 +45,17 @@ class USLocalizer {
 		leftMotor.setSpeed(ROTATION_SPEED);
 		rightMotor.setSpeed(ROTATION_SPEED);
 	}
+	
+	public void localizer() {
+		usSensor.getDistanceMode().fetchSample(usData, 0);
+		currentDist[0] = (int)(usData[0]*100);
+		if(currentDist[0] > d) {
+			fallingEdge();
+		}
+		else {
+			risingEdge();
+		}
+	}
 
 	/**
 	 * This method performs the rising edge localization 

@@ -123,6 +123,7 @@ class LightLocalizer {
 		navigation.travelTo(0.0, 0.0);//Navigate to the origin
 		leftMotor.setSpeed(ROTATION_SPEED);
 		rightMotor.setSpeed(ROTATION_SPEED);
+		//navigation.turnTo(350);
 		//Rotate to be in the 0° direction
 		if (odometer.getXYT()[2] <= 358 && odometer.getXYT()[2] >= 2.0) {
 			leftMotor.rotate(convertAngle(Project.WHEEL_RADIUS, Project.WHEEL_BASE, -odometer.getXYT()[2]), true);
@@ -136,6 +137,21 @@ class LightLocalizer {
 		int corner = Project.corner;
 		if(corner == 0) {
 			odometer.setXYT(Project.TILE_SIZE, Project.TILE_SIZE, 0.0);
+			Project.gyrosensor.reset();
+		}
+		else if(corner == 1) {
+			navigation.turnTo(90);
+			odometer.setXYT(14*Project.TILE_SIZE, Project.TILE_SIZE, 0.0);
+			Project.gyrosensor.reset();
+		}
+		else if(corner == 2) {
+			navigation.turnTo(180);
+			odometer.setXYT(14*Project.TILE_SIZE, 8*Project.TILE_SIZE, 0.0);
+			Project.gyrosensor.reset();
+		}
+		else if(corner == 3) {
+			navigation.turnTo(270);
+			odometer.setXYT(Project.TILE_SIZE, 8*Project.TILE_SIZE, 0.0);
 			Project.gyrosensor.reset();
 		}
 	}

@@ -35,6 +35,8 @@ public class Main {
   private static final Port backColorPort = LocalEV3.get().getPort("S3");
   public static final Port gyroPort = LocalEV3.get().getPort("S4");
   
+  public static EV3GyroSensor gyro_Sensor;
+  
   // Robot hardware related parameters:
   public static final double WHEEL_RADIUS = 2.05;
   public static final double WHEEL_BASE = 9.5;
@@ -55,8 +57,6 @@ public class Main {
   public static int SZ_LLy = 6;
   public static int SZ_URx = 10;
   public static int SZ_URy = 9;
-  
-  private static final TextLCD lcd = LocalEV3.get().getTextLCD();
   
   public static void main(String[] args) throws OdometerExceptions, InterruptedException {
     
@@ -96,7 +96,8 @@ public class Main {
     // 3. Create a sample provider instance for the above and initialize operating mode
     // 4. Create a buffer for the sensor data
     @SuppressWarnings("resource") // Because we don't bother to close this resource
-    SensorModes gyroSensor = new EV3GyroSensor(gyroPort);
+    EV3GyroSensor gyroSensor = new EV3GyroSensor(gyroPort);
+    gyro_Sensor = gyroSensor;
     SampleProvider gyroValue = gyroSensor.getMode("Angle"); // gyroValue provides samples from this instance
     float[] gyroData = new float[gyroValue.sampleSize()]; // gyroData is the buffer in which data are returned
 
@@ -111,16 +112,22 @@ public class Main {
     Thread canScannerThread = new Thread(canScanner);
     canScannerThread.start();
     
-    //TODO Set up objects of classes
+    // Set up objects of classes
+    @SuppressWarnings("unused")
     Navigation navigator = new Navigation(odometer, leftMotor, rightMotor, gyroValue, gyroData);
     MapDriver mapDriver = new MapDriver(odometer);
+    @SuppressWarnings("unused")
     ClawMovement clawMovement = new ClawMovement(clawMotor);
+    @SuppressWarnings("unused")
     CanColorDetection canColorDetector = new CanColorDetection(frontColorSensor, frontColorData, colorSensorMotor);
+    @SuppressWarnings("unused")
     CanWeightDetection canWeightDetector = new CanWeightDetection(clawMotor);
     
+    @SuppressWarnings("unused")
     USLocalization usLocalizer = new USLocalization(odometer, leftMotor, rightMotor, usSensor);
     USLocalization.doUSLocalization();
     
+    @SuppressWarnings("unused")
     LightLocalization lightLocalizer = new LightLocalization(odometer, leftMotor, rightMotor, backColorSensor, backColorData);
     LightLocalization.doLightLocalization();
     

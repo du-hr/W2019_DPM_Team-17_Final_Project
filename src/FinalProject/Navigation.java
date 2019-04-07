@@ -82,7 +82,7 @@ public class Navigation {
     }
   }
 
-  private static void angleCorrection() {
+  public static void angleCorrection() {
     gyroSensor.fetchSample(gyroData, 0);
     if (gyroData[0] >= 0) {
       odometer.setXYT(odometer.getXYT()[0], odometer.getXYT()[1], gyroData[0]);
@@ -153,13 +153,11 @@ public class Navigation {
    * @param distance
    * @return
    */
-  private static int convertDistanceForMotor(double distance) {
+  public static int convertDistanceForMotor(double distance) {
     return (int) (360 * distance / (2 * Math.PI * WHEEL_RADIUS));
   }
 
-  // gets the data from the color sensor, and returns a value corresponding
-  // to the overall "brightness".
-  private static double getGyroData() {
+  public static double getGyroData() {
     gyroSensor.fetchSample(gyroData, 0);
     // we correct the angle in odometer and return it here as the
     // reading of heading angle from gyro sensor

@@ -4,6 +4,7 @@ package FinalProject;
 import static FinalProject.Navigation.*;
 import java.util.concurrent.TimeUnit;
 import Odometer.Odometer;
+import lejos.hardware.Sound;
 import static FinalProject.Main.*;
 import static FinalProject.CanScanner.*;
 
@@ -218,7 +219,7 @@ public class MapDriver{
   
 
   private void moveToCan(double detectedCanHeading, double detectedCanDistance) {
-    detectedCanDistance = detectedCanDistance / 180 * Math.PI; // CONVERT TO RADIAN
+    detectedCanDistance = detectedCanDistance / (double)180 * Math.PI; // CONVERT TO RADIAN
     double[] odoData = odometer.getXYT();
     double scanningPositionX = odoData[0];
     double scanningPositionY = odoData[1];
@@ -292,5 +293,9 @@ public class MapDriver{
     travelTo(bridgeX,bridgeY);
     travelTo(0.5,0.5);
     ClawMovement.releaseCan();
+    travelTo(1,1);
+    Sound.twoBeeps();
+    Sound.twoBeeps();
+    Sound.beep();
   }
 }

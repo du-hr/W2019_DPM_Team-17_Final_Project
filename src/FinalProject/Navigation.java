@@ -76,7 +76,7 @@ public class Navigation {
       turnLeft(angle);
 
     } else if (angle < 0) {
-      turnLeft(angle);
+      turnLeft(Math.abs(angle));
     } else if (angle > 0) {
       turnRight(angle);
     }

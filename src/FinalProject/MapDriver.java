@@ -46,6 +46,7 @@ public class MapDriver{
       bridgeX = TN_LLx + 0.5;
       bridgeY = TN_LLy;
     }
+    travelTo(bridgeX-0.5,bridgeY);
     travelTo(bridgeX,bridgeY);
   }
 
@@ -291,9 +292,9 @@ public class MapDriver{
   private void goHome() {
     travelTo(islandX,islandY);
     travelTo(bridgeX,bridgeY);
-    travelTo(0.5,0.5);
+    travelTo(0.5,8.5);
     ClawMovement.releaseCan();
-    travelTo(1,1);
+    travelTo(1,8);
     Sound.twoBeeps();
     Sound.twoBeeps();
     Sound.beep();

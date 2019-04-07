@@ -3,7 +3,6 @@ package FinalProject;
 import Odometer.*;
 import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
-import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.port.Port;
@@ -36,6 +35,7 @@ public class Main {
   public static final Port gyroPort = LocalEV3.get().getPort("S4");
   
   public static EV3GyroSensor gyro_Sensor;
+  public static EV3ColorSensor back_sensor;
   
   // Robot hardware related parameters:
   public static final double WHEEL_RADIUS = 2.05;
@@ -45,6 +45,7 @@ public class Main {
   
   // Project specifications:
   public static final double TILE_SIZE = 30.48;
+  public static int corner = 3;
   public static int LLx = 0;
   public static int LLy = 5;
   public static int URx = 4;
@@ -65,7 +66,6 @@ public class Main {
     // 2. Create a sensor instance and attach to port
     // 3. Create a sample provider instance for the above and initialize operating mode
     // 4. Create a buffer for the sensor data
-    @SuppressWarnings("resource") // Because we don't bother to close this resource
     SensorModes usSensor = new EV3UltrasonicSensor(usPort);
     SampleProvider usValue = usSensor.getMode("Distance"); // usValue provides samples from this instance
     float[] usData = new float[usValue.sampleSize()]; // usData is the buffer in which data are returned
@@ -75,7 +75,6 @@ public class Main {
     // 2. Create a sensor instance and attach to port
     // 3. Create a sample provider instance for the above and initialize operating mode
     // 4. Create a buffer for the sensor data
-    @SuppressWarnings("resource") // Because we don't bother to close this resource
     SensorModes frontColorSensor = new EV3ColorSensor(frontColorPort);
     SampleProvider frontColorValue = frontColorSensor.getMode("RGB"); // colorValue provides samples from this instance
     float[] frontColorData = new float[frontColorValue.sampleSize()]; // colorData is the buffer in which data are returned
@@ -85,20 +84,17 @@ public class Main {
     // 2. Create a sensor instance and attach to port
     // 3. Create a sample provider instance for the above and initialize operating mode
     // 4. Create a buffer for the sensor data
-    @SuppressWarnings("resource") // Because we don't bother to close this resource
-    SensorModes backColorSensor = new EV3ColorSensor(backColorPort);
-    SampleProvider backColorValue = backColorSensor.getMode("Red"); // colorValue provides samples from this instance
-    float[] backColorData = new float[backColorValue.sampleSize()]; // colorData is the buffer in which data are returned
-    
+    EV3ColorSensor backColorSensor = new EV3ColorSensor(backColorPort);
+    back_sensor = backColorSensor;
+   
     // Setup gyro sensor
     // 1. Create a port object attached to a physical port (done above)
     // 2. Create a sensor instance and attach to port
     // 3. Create a sample provider instance for the above and initialize operating mode
     // 4. Create a buffer for the sensor data
-    @SuppressWarnings("resource") // Because we don't bother to close this resource
     EV3GyroSensor gyroSensor = new EV3GyroSensor(gyroPort);
     gyro_Sensor = gyroSensor;
-    SampleProvider gyroValue = gyroSensor.getMode("Angle"); // gyroValue provides samples from this instance
+    SampleProvider gyroValue = gyro_Sensor.getMode("Angle"); // gyroValue provides samples from this instance
     float[] gyroData = new float[gyroValue.sampleSize()]; // gyroData is the buffer in which data are returned
 
     // Setup the odometer
@@ -127,9 +123,10 @@ public class Main {
     USLocalization usLocalizer = new USLocalization(odometer, leftMotor, rightMotor, usSensor);
     USLocalization.doUSLocalization();
     
-    @SuppressWarnings("unused")
-    LightLocalization lightLocalizer = new LightLocalization(odometer, leftMotor, rightMotor, backColorSensor, backColorData);
-    LightLocalization.doLightLocalization();
+    LightLocalization lightLocalizer = new LightLocalization(odometer, leftMotor, rightMotor);
+    lightLocalizer.localize();
+    
+    //@SuppressWarnings("unused")
     
     Sound.beepSequenceUp();
     

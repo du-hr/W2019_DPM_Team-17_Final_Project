@@ -119,6 +119,8 @@ public class Main {
     @SuppressWarnings("unused")
     CanWeightDetection canWeightDetector = new CanWeightDetection(clawMotor);
     
+    Wifi wifi = new Wifi();
+    
 
     //USLocalization usLocalizer = new USLocalization(odometer, leftMotor, rightMotor, usSensor);
     //USLocalization.doUSLocalization();

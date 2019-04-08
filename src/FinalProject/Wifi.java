@@ -6,7 +6,7 @@ import ca.mcgill.ecse211.WiFiClient.WifiConnection;
 
 class Wifi {
 	
-	private static final String SERVER_IP = "192.168.2.8";
+	private static final String SERVER_IP = "192.168.2.46";
 	private static final int TEAM_NUMBER = 17;
 	private static final boolean ENABLE_DEBUG_WIFI_PRINT = true;
 

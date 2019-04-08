@@ -119,15 +119,15 @@ public class Main {
     @SuppressWarnings("unused")
     CanWeightDetection canWeightDetector = new CanWeightDetection(clawMotor);
     
-    Wifi wifi = new Wifi();
+    //Wifi wifi = new Wifi();
     
 
-    //USLocalization usLocalizer = new USLocalization(odometer, leftMotor, rightMotor, usSensor);
-    //USLocalization.doUSLocalization();
+    USLocalization usLocalizer = new USLocalization(odometer, leftMotor, rightMotor, usSensor);
+    USLocalization.doUSLocalization();
     
     LightLocalization lightLocalizer = new LightLocalization(odometer, leftMotor, rightMotor);
     lightLocalizer.localize();
-    
+    lightLocalizer.startCorner();
     
     Sound.beepSequenceUp();
     odometer.setXYT(1*TILE_SIZE, 8*TILE_SIZE, 0);

@@ -16,7 +16,7 @@ public class USLocalization {
   private static SampleProvider usSensor;
   private static int[] currentDist = new int[4];
   //Parameters related to wall detection (falling and rising edge)
-  private static double d = 40.00;
+  private static double d = 42.00;
   private static double k = 5;
   
   /**

@@ -15,12 +15,12 @@ public class LightLocalization {
     public Navigation navigation;
     //Parameters related to the light sensor (input)
     private SensorModes lightSensor = Main.back_sensor;
-    private SampleProvider color;
     private float[] colorData;
     private float prevColor = 0;
     private int numLines = 0;
     private double[] lineAngle = new double[4];
-    private static float[] gyroData;
+    private static SampleProvider gyro_sp = Main.gyro_Sensor.getMode("Angle");
+    private float[] gyroData = new float[gyro_sp.sampleSize()];
 
     /**
      * This is the constructor for the class 
@@ -44,11 +44,13 @@ public class LightLocalization {
         Navigation.turnTo(45);
         leftMotor.setSpeed(ROTATION_SPEED);
         rightMotor.setSpeed(ROTATION_SPEED);
-        color.fetchSample(colorData, 0);
         // use a differential filter to detect lines
+        this.colorData = new float[lightSensor.sampleSize()];
+        SampleProvider color  = lightSensor.getMode("Red");
+        color.fetchSample(colorData, 0);
         float colordiff = prevColor - colorData[0];
         prevColor = colorData[0];
-        while (colordiff < 0.05) {//We move forward until we detect a line
+        while (colordiff < 0.07) {//We move forward until we detect a line
             color.fetchSample(colorData, 0);
             colordiff = prevColor - colorData[0];
             //prevColor = colorData[0];
@@ -68,10 +70,11 @@ public class LightLocalization {
      * @return Not used
      */
     public void localize() {
-        this.color = lightSensor.getMode("Red");
+        SampleProvider color  = lightSensor.getMode("Red");
         leftMotor.setSpeed(ROTATION_SPEED);
         rightMotor.setSpeed(ROTATION_SPEED);
         Main.gyro_Sensor.reset();
+        float[] colorData = new float[color.sampleSize()]; 
         color.fetchSample(colorData, 0);
         prevColor = colorData[0];
         //Start by getting close to the origin
@@ -82,7 +85,7 @@ public class LightLocalization {
             rightMotor.backward();
             color.fetchSample(colorData, 0);
             float colordiff = prevColor - colorData[0];
-            if (colordiff >= 0.05) {
+            if (colordiff >= 0.07) {
                 lineAngle[numLines] =gyroFetch();//Store the angle for each line
                 numLines++;
             }

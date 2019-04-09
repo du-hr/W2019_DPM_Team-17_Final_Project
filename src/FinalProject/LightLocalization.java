@@ -1,7 +1,6 @@
 package FinalProject;
 
 import Odometer.Odometer;
-import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
@@ -89,7 +88,6 @@ public class LightLocalization {
             if (colordiff >= 0.07) {
                 lineAngle[numLines] =gyroFetch();//Store the angle for each line
                 numLines++;
-                Sound.beep();
             }
         }
         leftMotor.stop(true);
@@ -104,7 +102,7 @@ public class LightLocalization {
         Navigation.travelTo(0.0, 0.0);//Navigate to the origin
         leftMotor.setSpeed(ROTATION_SPEED);
         rightMotor.setSpeed(ROTATION_SPEED);
-        navigation.turnTo(0);
+        Navigation.turnTo(0);
         //Rotate to be in the 0� direction
         /*if (odometer.getXYT()[2] <= 358 && odometer.getXYT()[2] >= 2.0) {
             leftMotor.rotate(convertAngle(Main.WHEEL_RADIUS, Main.WHEEL_BASE, -odometer.getXYT()[2]), true);
@@ -120,25 +118,25 @@ public class LightLocalization {
         if(corner == 0) {
             odometer.setXYT(Main.TILE_SIZE, Main.TILE_SIZE, 0.0);
             Main.gyro_Sensor.reset();
-            Sound.beep();
+            Main.Homex = 1; Main.Homey = 1;
         }
         else if(corner == 1) {
             Navigation.turnTo(90);
             odometer.setXYT(14*Main.TILE_SIZE, Main.TILE_SIZE, 0.0);
             Main.gyro_Sensor.reset();
-            Sound.beep();
+            Main.Homex = 14; Main.Homey = 1;
         }
         else if(corner == 2) {
             Navigation.turnTo(180);
             odometer.setXYT(14*Main.TILE_SIZE, 8*Main.TILE_SIZE, 0.0);
             Main.gyro_Sensor.reset();
-            Sound.beep();
+            Main.Homex = 14; Main.Homey = 8;
         }
         else if(corner == 3) {
-            Navigation.turnTo(-90);
+            Navigation.turnTo(270);
             odometer.setXYT(Main.TILE_SIZE, 8*Main.TILE_SIZE, 0.0);
             Main.gyro_Sensor.reset();
-            Sound.twoBeeps();
+            Main.Homex = 1; Main.Homey = 8;
         }
     }
 

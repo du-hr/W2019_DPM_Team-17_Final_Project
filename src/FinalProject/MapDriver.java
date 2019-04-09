@@ -292,9 +292,9 @@ public class MapDriver{
   private void goHome() {
     travelTo(islandX,islandY);
     travelTo(bridgeX,bridgeY);
-    travelTo(0.5,8.5);
+    travelTo(Homex,Homey);
     ClawMovement.releaseCan();
-    travelTo(1,8);
+    travelTo(Homex, Homey);
     Sound.twoBeeps();
     Sound.twoBeeps();
     Sound.beep();

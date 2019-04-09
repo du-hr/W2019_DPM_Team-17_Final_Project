@@ -46,6 +46,8 @@ public class Main {
   // Project specifications:
   public static final double TILE_SIZE = 30.48;
   public static int corner = 3;
+  public static int Homex = 1;
+  public static int Homey = 8;
   public static int LLx = 0;
   public static int LLy = 5;
   public static int URx = 4;
@@ -119,7 +121,7 @@ public class Main {
     @SuppressWarnings("unused")
     CanWeightDetection canWeightDetector = new CanWeightDetection(clawMotor);
     
-    //Wifi wifi = new Wifi();
+    Wifi wifi = new Wifi();
     
 
     USLocalization usLocalizer = new USLocalization(odometer, leftMotor, rightMotor, usSensor);
@@ -130,7 +132,6 @@ public class Main {
     lightLocalizer.startCorner();
     
     Sound.beepSequenceUp();
-    odometer.setXYT(1*TILE_SIZE, 8*TILE_SIZE, 0);
     mapDriver.drive();
   }
 }

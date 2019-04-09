@@ -62,24 +62,24 @@ public class Navigation {
 
   // to make sure the angle of each turn is the minimum angle possible
   public static void turnTo(double heading) {
-    double[] odoData = odometer.getXYT();
-    double theta = odoData[2];
-
-    double angle = heading - theta;
-
-
-    if (angle < -180.0) {
-      angle = angle + 360;
-      turnRight(angle);
-    } else if (angle > 180.0) {
-      angle = angle - 360;
-      turnLeft(angle);
-
-    } else if (angle < 0) {
-      turnLeft(Math.abs(angle));
-    } else if (angle > 0) {
-      turnRight(angle);
-    }
+	  double[] odoData = odometer.getXYT();
+		double theta = getGyroData();
+		//Replace previous line of code with previous comment to test correction
+		//Also change turnRight and turnLeft with turnRight2 and turnLeft2
+		double angle = heading-theta;
+		if(angle < -180.0) {
+			angle = angle + 360;
+			turnRight(angle);
+		} 
+		else if (angle > 180.0) {
+			turnLeft(360 - angle);
+		} 
+		else if (angle < 0) {
+			turnLeft(Math.abs(angle));
+		}
+		else if(angle > 0) {
+			turnRight(angle);
+		}
   }
 
   public static void angleCorrection() {

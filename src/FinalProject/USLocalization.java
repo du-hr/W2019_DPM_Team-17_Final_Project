@@ -39,8 +39,74 @@ public class USLocalization {
     // TODO Auto-generated method stub
     leftMotor.setSpeed(ROTATE_SPEED);
     rightMotor.setSpeed(ROTATE_SPEED);
-    fallingEdge();
+    usSensor.fetchSample(usData, 0);
+    currentDist[0] = (int)(usData[0]*100);
+    if(currentDist[0] < d) {
+    	risingEdge();
+    }
+    else {
+    	fallingEdge();
+    }
   }
+  
+  /**
+	 * This method performs the rising edge localization 
+	 * @return Not used
+	 */
+	public static void risingEdge() {
+		double angleA, angleB, turningAngle;//Variables to use to get the 0° angle
+		//Get the distance from the US sensor
+		usSensor.fetchSample(usData, 0);
+		currentDist[0] = (int)(usData[0]*100);
+		//If the robot is not facing the wall, rotate anti-clockwise until facing it
+		while (currentDist[0] > d) {
+			leftMotor.backward();
+			rightMotor.forward();
+			usSensor.fetchSample(usData, 0);
+			currentDist[0] = (int)(usData[0]*100);
+		}
+		//Once the robot faces the wall, rotate anti-clockwise until not facing it anymore
+		while (currentDist[0] < d + k) {
+			leftMotor.backward();
+			rightMotor.forward();
+			usSensor.fetchSample(usData, 0);
+			currentDist[0] = (int)(usData[0]*100);
+		}
+		//Record the angle from the odometer when not facing the wall anymore
+		angleA = odometer.getXYT()[2];
+		//Rotate clockwise until facing the wall again
+		while (currentDist[0] > d) {
+			leftMotor.forward();
+			rightMotor.backward();
+			usSensor.fetchSample(usData, 0);
+			currentDist[0] = (int)(usData[0]*100);
+		}
+		//Continue rotating clockwise until not facing the wall again
+		while (currentDist[0] < d + k) {
+			leftMotor.forward();
+			rightMotor.backward();
+			usSensor.fetchSample(usData, 0);
+			currentDist[0] = (int)(usData[0]*100);
+		}
+		//Record this second angle when not facing the wall
+		angleB = odometer.getXYT()[2];
+		leftMotor.stop(true);
+		rightMotor.stop();
+		//Calculate the change in angle of the robot from the 0° angle
+		if (angleA < angleB) {
+			deltaTheta = 45 - (angleA + angleB) / 2 + 180;
+		} else if (angleA > angleB) {
+			deltaTheta = 225 - (angleA + angleB) / 2 + 180;
+		}
+		//Calculate the angle by which to turn to face the 0° angle
+		turningAngle = deltaTheta + odometer.getXYT()[2];
+		//Turn towards the 0° angle
+		leftMotor.rotate(-convertAngle(WHEEL_RADIUS, WHEEL_BASE, turningAngle+4.5), true);
+		rightMotor.rotate(convertAngle(WHEEL_RADIUS, WHEEL_BASE, turningAngle+4.5), false);
+		//Reset the values of the odometer
+		odometer.setXYT(0.0, 0.0, 0.0);
+	}
+  
   /**
    * This method performs the falling edge localization 
    * @return Not used

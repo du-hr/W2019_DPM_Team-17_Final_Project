@@ -1,3 +1,6 @@
+/**
+ * This class performs the light localization
+ */
 package FinalProject;
 
 import Odometer.Odometer;
@@ -103,16 +106,16 @@ public class LightLocalization {
         leftMotor.setSpeed(ROTATION_SPEED);
         rightMotor.setSpeed(ROTATION_SPEED);
         Navigation.turnTo(0);
-        //Rotate to be in the 0ï¿½ direction
-        /*if (odometer.getXYT()[2] <= 358 && odometer.getXYT()[2] >= 2.0) {
-            leftMotor.rotate(convertAngle(Main.WHEEL_RADIUS, Main.WHEEL_BASE, -odometer.getXYT()[2]), true);
-            rightMotor.rotate(-convertAngle(Main.WHEEL_RADIUS, Main.WHEEL_BASE, -odometer.getXYT()[2]), false);
-        }*/
         leftMotor.stop(true);
         rightMotor.stop();
         Main.gyro_Sensor.reset();
     }
 
+    /**
+     * This method is used to turn the robot to the 0° direction of the map,
+     * depending on its starting corner 
+     * @return Not used
+     */
     public void startCorner() {
         int corner = Main.corner;
         if(corner == 0) {
@@ -140,12 +143,21 @@ public class LightLocalization {
         }
     }
 
+    /**
+     * This method is called to get the angle from the gyrosensor 
+     * @return Not used
+     */
     private double gyroFetch() {
         Main.gyro_Sensor.fetchSample(gyroData, 0);
         angleCorrection();
         return odometer.getXYT()[2];
     }
 
+    /**
+     * This method is used to correct the angle in the odometer based on the
+     * reading of the gyrosensor (used as a safety measure to get an accurate angle) 
+     * @return Not used
+     */
     private void angleCorrection() {
       Main.gyro_Sensor.fetchSample(gyroData, 0);        
       if (gyroData[0] >= 0) {
@@ -165,10 +177,6 @@ public class LightLocalization {
      */
     private static int convertDistance(double radius, double distance) {
         return (int) ((180.0 * distance) / (Math.PI * radius));
-    }
-
-    private static int convertAngle(double radius, double width, double angle) {
-        return convertDistance(radius, Math.PI * width * angle / 360.0);
     }
 
 }

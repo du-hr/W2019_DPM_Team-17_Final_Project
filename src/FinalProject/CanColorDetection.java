@@ -20,12 +20,12 @@ public class CanColorDetection {
     {{0.22, 0.73, 0.64}, {0.83, 0.54, 0.16}, {0.31, 0.93, 0.19}, {0.97, 0.18, 0.11}};
 
   /**
-	 * This is the constructor for the class
-	 * @param colorSensor
-	 * @param colorData
-	 * @param colorSensorMotor
-	 * @return Not used
-	 */
+   * This is the constructor for the class
+   * @param colorSensor
+   * @param colorData
+   * @param colorSensorMotor
+   * @return Not used
+   */
   public CanColorDetection(SampleProvider colorSensor, float[] colorData,
       EV3LargeRegulatedMotor colorSensorMotor) {
     CanColorDetection.colorSensorMotor = colorSensorMotor;
@@ -34,12 +34,12 @@ public class CanColorDetection {
   }
 
   /**
-	 * This method continuously rotates the motor by 5°, reads the RGB value of a can
-	 * and compares (euclidean distance) it to the mean values obtained through testing. If the
-	 * values are close enough (within 0.1 distance), detect the color, otherwise rotate
-	 * and collect another color sample
-	 * @return Not used
-	 */
+   * This method continuously rotates the motor by 5°, reads the RGB value of a can
+   * and compares (euclidean distance) it to the mean values obtained through testing. If the
+   * values are close enough (within 0.1 distance), detect the color, otherwise rotate
+   * and collect another color sample
+   * @return Not used
+   */
   public static void detectCanColor() {
     colorSensorMotor.setSpeed(50);// Set the speed of the sensor Motor
     int colorNum = -1;// We have not yet identified the color

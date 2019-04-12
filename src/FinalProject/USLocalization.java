@@ -1,3 +1,6 @@
+/**
+ * This class implements the falling edge and rising edge localization with ultrasonic sensor
+ */
 package FinalProject;
 
 import static FinalProject.Main.*;
@@ -35,8 +38,12 @@ public class USLocalization {
       USLocalization.usSensor = usSensor;
   }
 
+  /**
+   * This method performs the localization (calls rising edge or falling
+   * edge depending on whether or not we are facing the wall)
+   * @return Not used
+   */
   public static void doUSLocalization() {
-    // TODO Auto-generated method stub
     leftMotor.setSpeed(ROTATE_SPEED);
     rightMotor.setSpeed(ROTATE_SPEED);
     usSensor.fetchSample(usData, 0);
@@ -50,9 +57,9 @@ public class USLocalization {
   }
   
   /**
-	 * This method performs the rising edge localization 
-	 * @return Not used
-	 */
+   * This method performs the rising edge localization 
+   * @return Not used
+   */
 	public static void risingEdge() {
 		double angleA, angleB, turningAngle;//Variables to use to get the 0° angle
 		//Get the distance from the US sensor

@@ -1,3 +1,6 @@
+/**
+ * This class is used to navigate from the robot's current position to a specified waypoint
+ */
 package FinalProject;
 
 import Odometer.Odometer;
@@ -13,6 +16,15 @@ public class Navigation {
   private static SampleProvider gyroSensor;
   private static float[] gyroData;
 
+  /**
+   * This is the constructor for the class 
+   * @param odometer   The odometer
+   * @param leftMotor  The left motor of the robot
+   * @param rightMotor The right motor of the robot
+   * @param gyroSensor  The gyrosensor
+   * @param gyroData    The array to store angle readings from the gyrosensor
+   * @return Not used
+   */
   public Navigation(Odometer odometer, EV3LargeRegulatedMotor leftMotor,
       EV3LargeRegulatedMotor rightMotor, SampleProvider gyroSensor, float[] gyroData) {
     Navigation.odometer = odometer;
@@ -22,6 +34,11 @@ public class Navigation {
     Navigation.gyroData = gyroData;
   }
 
+  /**
+   * This method is used to travel from the current position to specified coordinates x and y
+   * Corresponding to coordinates on the map (without the tile size)
+   * @return Not used
+   */
   public static void travelTo(double x, double y) {
 
     x = x * TILE_SIZE;
@@ -61,6 +78,12 @@ public class Navigation {
   }
 
   // to make sure the angle of each turn is the minimum angle possible
+  /**
+   * This method is used find which way we should turn (clockwise or anticlockwise)
+   * and by how much degrees
+   * @param heading  the angle to turn to
+   * @return Not used
+   */
   public static void turnTo(double heading) {
 	  double[] odoData = odometer.getXYT();
 		double theta = getGyroData();
@@ -82,6 +105,11 @@ public class Navigation {
 		}
   }
 
+  /**
+   * This method is used to correct the angle in the odometer based on the
+   * reading of the gyrosensor (used as a safety measure to get an accurate angle) 
+   * @return Not used
+   */
   public static void angleCorrection() {
     gyroSensor.fetchSample(gyroData, 0);
     if (gyroData[0] >= 0) {
@@ -91,6 +119,12 @@ public class Navigation {
     }
   }
 
+  /**
+   * This method is used to turn counterclockwise by a certain angle, relying
+   * on the gyrosensor reading to be as close to the desired angle as possible
+   * @param degree  the angle by how much to turn
+   * @return Not used
+   */
   public static void turnLeft(double degree) {
     if (degree <= 1) {
       return;
@@ -114,6 +148,12 @@ public class Navigation {
     rightMotor.stop();
   }
 
+  /**
+   * This method is used to turn clockwise by a certain angle, relying
+   * on the gyrosensor reading to be as close to the desired angle as possible
+   * @param degree  the amount of degrees by which to turn
+   * @return Not used
+   */
   public static void turnRight(double degree) {
     if (degree <= 1) {
       return;
@@ -157,6 +197,10 @@ public class Navigation {
     return (int) (360 * distance / (2 * Math.PI * WHEEL_RADIUS));
   }
 
+  /**
+   * This method is called to get the angle from the gyrosensor 
+   * @return Not used
+   */
   public static double getGyroData() {
     gyroSensor.fetchSample(gyroData, 0);
     // we correct the angle in odometer and return it here as the

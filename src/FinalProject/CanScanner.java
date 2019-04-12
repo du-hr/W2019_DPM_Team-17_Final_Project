@@ -24,6 +24,15 @@ public class CanScanner implements Runnable {
 
 
   // constructor
+  /**
+   * This is the constructor for the class
+   * @param usSensor the ultrasonic sensor
+   * @param usData   the array to store distance readings from the ultrasonic sensor
+   * @param leftMotor  the left motor
+   * @param rightMotor  the right motor
+   * @param odometer    the odometer
+   * @return Not used
+   */
   public CanScanner(SampleProvider usSensor, float[] usData, EV3LargeRegulatedMotor leftMotor,
       EV3LargeRegulatedMotor rightMotor, Odometer odometer) {
     this.usSensor = usSensor;
@@ -33,7 +42,11 @@ public class CanScanner implements Runnable {
     this.odometer = odometer;
   }
   
-
+  /**
+   * This method is where the logic for the can scanner will run. It performs a search
+   * for a can once the boolean variable isScanning is set to true (done in the
+   * MapDriver class).
+   */
   // turning right 90 degrees and stop rotating until finds a can
   @Override
   public void run() {

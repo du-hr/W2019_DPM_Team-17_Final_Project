@@ -1,3 +1,7 @@
+/**
+ * This class is used to scan through 90° (clockwise) from a waypoint and detect
+ * if there is a can within a one tile distance
+ */
 package FinalProject;
 
 import static FinalProject.Main.ROTATE_SPEED;

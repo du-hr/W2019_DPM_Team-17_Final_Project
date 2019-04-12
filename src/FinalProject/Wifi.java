@@ -1,3 +1,9 @@
+/**
+ * This class is used to get the required parameters from the server
+ * using the DPM wifi connection
+ *  
+ * @author Aymar Muhikira
+ */
 package FinalProject;
 
 import java.util.Map;
@@ -6,16 +12,25 @@ import ca.mcgill.ecse211.WiFiClient.WifiConnection;
 
 class Wifi {
 	
-	private static final String SERVER_IP = "192.168.2.46";
+	private static final String SERVER_IP = "192.168.2.4";
 	private static final int TEAM_NUMBER = 17;
 	private static final boolean ENABLE_DEBUG_WIFI_PRINT = true;
 
 	@SuppressWarnings("rawtypes")
-
+	
+	/**
+	 * This is the constructor for the class 
+	 * @return Not used
+	 */
 	public Wifi() {
 		this.getData();
 	}
 	
+	/**
+	 * This method records the given parameters in the map data and updates the parameters in the
+	 * main class according to the team number of the green or red team 
+	 * @return Not used
+	 */
 	public void getData() {
 		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
 	    try {

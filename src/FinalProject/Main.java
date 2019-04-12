@@ -1,3 +1,13 @@
+/**
+ * This class is the main class of the project
+ * 
+ * @author Alex Lo 
+ * @author Aymar Muhikira
+ * @author Haoran Du
+ * @author Charles Liu
+ * @author Nicki Hu
+ * @author David Schrier
+ */
 package FinalProject;
 
 import Odometer.*;
@@ -61,6 +71,12 @@ public class Main {
   public static int SZ_URx = 10;
   public static int SZ_URy = 9;
   
+  /**
+   * This is the main method that runs on the EV3 
+   * @param args
+   * @return Not used
+   * @throws OdometerExceptions , InterruptedException
+   */ 
   public static void main(String[] args) throws OdometerExceptions, InterruptedException {
     
     // Setup ultrasonic sensor

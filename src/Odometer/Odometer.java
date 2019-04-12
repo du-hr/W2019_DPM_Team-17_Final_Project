@@ -1,11 +1,6 @@
 /**
- * This class is meant as a skeleton for the odometer class to be used.
- * 
- * @author Rodrigo Silva
- * @author Dirk Dubois
- * @author Derek Yu
- * @author Karim El-Baba
- * @author Michael Smith
+ * This class implements the odometer to
+ * keep track of the EV3's position
  */
 
 package Odometer;
@@ -37,8 +32,10 @@ public class Odometer extends OdometerData implements Runnable {
 	 * This is the default constructor of this class. It initiates all motors and
 	 * variables once.It cannot be accessed externally.
 	 * 
-	 * @param leftMotor
-	 * @param rightMotor
+	 * @param leftMotor    the left motor
+	 * @param rightMotor    the right motor
+	 * @param TRACK         Length of the track
+	 * @param WHEEL_RAD      the wheel radius
 	 * @throws OdometerExceptions
 	 */
 	private Odometer(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, final double TRACK,
@@ -65,6 +62,8 @@ public class Odometer extends OdometerData implements Runnable {
 	 * 
 	 * @param leftMotor
 	 * @param rightMotor
+	 * @param TRACK
+	 * @param WHEEL_RAD
 	 * @return new or existing Odometer Object
 	 * @throws OdometerExceptions
 	 */

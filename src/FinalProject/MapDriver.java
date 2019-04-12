@@ -1,3 +1,7 @@
+/**
+ * This class is used to decide how the robot should navigate through the map
+ * and when to search for a can
+ */
 package FinalProject;
 
 
@@ -21,11 +25,21 @@ public class MapDriver{
   private static double bridgeY;
   
   private Odometer odometer;
+  /**
+   * This is the constructor for the class 
+   * @param odo        The odometer
+   * @return Not used
+   */
   //default constructor
   public MapDriver(Odometer odometer) {
     this.odometer = odometer;
   }
   
+  /**
+   * This is the main method that decides where the robot should go
+   * @return Not used
+   * @throws InterruptedExcepption
+   */
   public void drive() throws InterruptedException{
     // repeat for 5 times
     for (int i=0; i<5; i++) {
@@ -36,6 +50,11 @@ public class MapDriver{
     }
   }
 
+  /**
+   * This method uses the class parameters in the main class to decide how to travel from the
+   * initial corner to the beginning of the tunnel
+   * @return Not used
+   */
   public void moveToBridge() {
     ClawMovement.holdCan();
     if (Math.abs(TN_URy-TN_LLy) < Math.abs(TN_URx-TN_LLx)){
@@ -50,7 +69,11 @@ public class MapDriver{
     travelTo(bridgeX,bridgeY);
   }
 
-
+  /**
+   * This method uses the class parameters in the main class to decide how to travel from the
+   * beginning to the end of the tunnel
+   * @return Not used
+   */
   public void travelThroughBridge() {
     if (Math.abs(TN_URy-TN_LLy) < Math.abs(TN_URx-TN_LLx)){
       islandY = TN_LLy + 0.5;
@@ -64,11 +87,23 @@ public class MapDriver{
     ClawMovement.releaseCan();
   }
 
+  /**
+   * This method uses the class parameters in the main class to decide how to travel from the
+   * end of the tunnel to the lower left corner of the search zone
+   * @return Not used
+   */
   public void moveToSearchZone() {
     travelTo(SZ_LLx,SZ_LLy);
     turnTo(0);
   }
   
+  /**
+   * This method is used to travel through the search zone and search for cans
+   * It is where the CanScanner class is activated using the isScanning parameter
+   * to search for cans at certain waypoints
+   * @return Not used
+   * @throws InterruptedException
+   */
   public void searchCan() throws InterruptedException{
     int SZ_length = SZ_URy - SZ_LLy;
     int SZ_width = SZ_URx - SZ_LLx;
@@ -217,8 +252,13 @@ public class MapDriver{
       }
     }
   }
-  
 
+  /**
+   * This method is used to move to a detected can
+   * @param detectedCanHeading  the angle of the robot when facing the detected can
+   * @param detectedCanDistance the distance to the can given by the ultrasonic sensor when facing the can
+   * @return Not used
+   */
   private void moveToCan(double detectedCanHeading, double detectedCanDistance) {
     detectedCanDistance = detectedCanDistance / (double)180 * Math.PI; // CONVERT TO RADIAN
     double[] odoData = odometer.getXYT();
@@ -258,14 +298,27 @@ public class MapDriver{
     }
   }
 
+  /**
+   * This method is called to do a color detection and it calls the CanColorDetection class
+   * @return Not used
+   */
   private void doColorDetection() {
     CanColorDetection.detectCanColor();
   }
   
+  /**
+   * This method is called to do a weight detection and it calls the CanWeightDetection class
+   * @return Not used
+   */
   private void doWeightDetection() {
     CanWeightDetection.detectCanWeight();
   }
   
+  /**
+   * This method is used to return a can to the lower left corner of the search zone
+   *  and then to the starting corner by calling the goHome method
+   * @return Not used
+   */
   public void moveCanBack() {
     if (CanScanner.initialHeading == 0) {
       travelTo(SZ_LLx,SZ_LLy);
@@ -289,6 +342,11 @@ public class MapDriver{
     }
   }
 
+  /**
+   * This method is used to return a can to the starting corner from the lower
+   * left corner of the search zone
+   * @return Not used
+   */
   private void goHome() {
     travelTo(islandX,islandY);
     travelTo(bridgeX,bridgeY);
